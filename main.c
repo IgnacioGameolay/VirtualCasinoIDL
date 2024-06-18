@@ -8,6 +8,10 @@
 #include <string.h>
 
 
+typedef struct{
+  char nombre[30];
+  int edad;
+} waka;
 
 /**
  *
@@ -24,7 +28,7 @@ int main()
 	puts("========================================");
 	
 	
-	char opcion; //Option del menu
+	char option; //Option del menu
 	do {
 		puts("========================================");
 		puts("     Escoge una opci[on");
@@ -34,9 +38,9 @@ int main()
 		puts("4) Salir");
 	
 		printf("Ingrese su opción: ");
-		scanf(" %c", &opcion);
+		scanf(" %c", &option);
 	
-		switch (opcion) {
+		switch (option) {
 		case '1':
 			break;
 		case '2':
@@ -48,7 +52,7 @@ int main()
 		presioneTeclaParaContinuar();
 		limpiarPantalla();
 
-	} while (opcion != '4');
+	} while (option != '4');
 
 	return 0;
 }
