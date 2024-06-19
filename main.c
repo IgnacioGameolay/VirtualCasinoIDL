@@ -6,6 +6,7 @@
 #include "tdas/heap.h"
 #include "tdas/extra.h"
 #include "tdas/queue.h"
+#include "tdas/map.h"
 //#include "juegos/blackjack.h"
 //#include "juegos/craps.h"
 //#include "juegos/higherorlower.h"
@@ -38,7 +39,7 @@ void InicializarBaraja(TipoBaraja *baraja) { //Funcion para inicializar la baraj
 	baraja->listaCartas = list_create();
 		
 	int i, j, k = 0;
-	char palos[] = {'C', 'D', 'P', 'T'}; // C = Corazones, D = Diamantes, P = Picas, T = Tréboles
+	char palos[] = {'C', 'P', 'T', 'D'}; // C = Corazones, D = Diamantes, P = Picas, T = Tréboles
 	
 	//Para cada palo
 	for (i = 0; i < 4 ; i++) {
@@ -54,27 +55,65 @@ void InicializarBaraja(TipoBaraja *baraja) { //Funcion para inicializar la baraj
 	}
 	baraja->cartaActual = 0;  // Inicializa el índice de la próxima carta a repartir
 }
-/*
-void barajarBaraja(TipoBaraja *baraja) {
+
+// Funcion comparación para el mapa
+int IsLowerInt(void *key1, void *key2) {
+	return *(int *)key1 <= *(int *)key2; 
+}
+
+Stack* MezclarBaraja(List* listaCartas) {
+		Map* mapaCartas = sorted_map_create(IsLowerInt);
+		Stack* barajada = stack_create(NULL);
+	
 		srand(time(NULL));
-		for (int i = 0; i < 52; i++) {
-				int j = rand() % 52;
-				TipoCarta temp = baraja->listaCartas[i];
-				baraja->listaCartas[i] = baraja->listaCartas[j];
-				baraja->listaCartas[j] = temp;
-		}
-		baraja->cartaActual = 0;  // Reinicia el índice de la próxima carta a repartir
-}*/
+
+
+	TipoCarta* cartaAux = NULL;
+	cartaAux = list_first(listaCartas);
+	
+	while(cartaAux != NULL){
+			cartaAux->clave = rand() % 52;
+			
+			map_insert(mapaCartas, &cartaAux->clave, cartaAux);
+			cartaAux = list_next(listaCartas);
+	}
+
+	int cont = 0;
+	// Recorrer el mapa y añadir las cartas a la pila
+	MapPair *pair = map_first(mapaCartas);
+	while (pair != NULL) {
+			TipoCarta *carta = pair->value;
+			stack_push(barajada, carta);
+			//cont++;
+			//printf("Valor: %d - carta N~: %d\n", carta->valor, cont);
+			pair = map_next(mapaCartas);
+	}
+
+	// Limpiar la memoria ocupada por el mapa
+	map_clean(mapaCartas);
+	free(mapaCartas);
+
+	// Retornar la pila con las cartas barajadas
+	return barajada;
+}
 
 void MostrarCartas(TipoBaraja *baraja){
 	TipoCarta* aux = list_first(baraja->listaCartas);
 
 	while(aux != NULL){
-		printf("Palo: %c - Valor: %d\n", aux->palo, aux->valor);
+		printf("Palo: %c - Valor: %d\n", 	aux->palo, aux->valor);
 		aux = list_next(baraja->listaCartas);
 	}
 }
 
+void MostrarBarajada(Stack* barajada){
+	TipoCarta* aux = stack_pop(barajada);
+
+	while(aux != NULL){
+		printf("Palo: %c - Valor: %d\n", aux->palo, aux->valor);
+		aux = stack_pop(barajada);
+	}
+}
 /**
  *
  * Función main
@@ -117,13 +156,16 @@ int main()
 
 
 		//Opciones del menu
-		
+		Stack* pilaCartas;
 		switch (option) {
 		case '1':
 			MostrarCartas(&barajaPrincipal);
 			break;
 		case '2':
-			MostrarCartas(&barajaPrincipal);
+			//MostrarCartas(&barajaPrincipal);
+			pilaCartas = MezclarBaraja((&barajaPrincipal)->listaCartas);
+			//printf("Cartas barajadas:\n");
+			MostrarBarajada(pilaCartas);
 			//Poker(chipCount);
 			break;
 		case '3':

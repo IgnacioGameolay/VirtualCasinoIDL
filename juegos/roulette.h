@@ -6,7 +6,7 @@
 typedef struct{
   int apuesta; //Cantidad apostada por el jugador
   int numero; //Número de la casilla a la que apuesta el jugador
-  int color; //Color de la casilla a la que apuesta el jugador
+  const char* color; //Color de la casilla a la que apuesta el jugador
   const char* tipo; //Tipo de apuesta hecha por el jugador
 }TipoApuesta;
 
