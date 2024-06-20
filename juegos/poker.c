@@ -8,6 +8,14 @@
 
 
 typedef struct {
+    int numeroRonda; // Número de la ronda (preflop, flop, turn, river)
+    int apuestaActual; // Apuesta actual en la ronda
+    int jugadorActual; // Índice del jugador que debe actuar
+    int accionActual; // Acción actual (apostar, igualar, subir, pasar, retirarse)
+} RondaApuestas;
+
+
+typedef struct {
         int valor;  // 1 para As, 11 para J, 12 para Q, 13 para K, y 2-10 para las cartas numéricas
         int clave;
         char palo;
@@ -15,14 +23,20 @@ typedef struct {
 
 typedef struct {
         List *listaCartas;
-        int cartaActual;  // Índice de la próxima carta a repartir
+        List *cartasComunitarias; // Cartas comunitarias (flop, turn, river)
+        RondaApuestas ronda; // Información de la ronda actual de apuestas
 } TipoBaraja;
 
 
 //Funcion para inicializar una baraja principal con las 52 cartas existentes (baraja inglesa).
 void InicializarBaraja(TipoBaraja *baraja) { 
     baraja->listaCartas = list_create();
-
+    baraja->cartasComunitarias = list_create();
+    baraja->ronda.numeroRonda = 0; // Empieza en preflop
+    baraja->ronda.apuestaActual = 0;
+    baraja->ronda.jugadorActual = 0;
+    baraja->ronda.accionActual = 0;
+    
     int i, j, k = 0;
     char palos[] = {'C', 'P', 'T', 'D'}; // C = Corazones, D = Diamantes, P = Picas, T = Tréboles
 
@@ -38,7 +52,6 @@ void InicializarBaraja(TipoBaraja *baraja) {
 
         }
     }
-    baraja->cartaActual = 0;  // Inicializa el índice de la próxima carta a repartir
 }
 
 // Funcion comparación para el mapa
@@ -120,64 +133,88 @@ void MostrarBarajada(Stack* barajada){
 }
 
 TipoCarta* SacarCarta(Stack* barajada){
-    TipoCarta* aux = stack_pop(barajada);
-    return aux;
+    return (TipoCarta*) stack_pop(barajada);
 }
 
+/*
+void RondaApuestas(int *cantFichas){
+    int apuesta = 0;
+    do {
+        puts("========================================");
+        puts(" Bienvenido a Jackpot.");
+        puts("========================================");
+        puts("(1) Apostar");
+        puts("(2) Fold");
+        puts("(3) Aumentar");
+        puts("========================================");
+        printf("Ingrese su opción: \n");
+        puts("========================================");
+        scanf(" %c", &option);
+
+        //Opciones del menu
+        switch (option) {
+        case '1':
+        case '2':
+            puts("Las reglas son...");
+            break;
+        case '3':
+            //HigherOrLower(chipCount);
+            return 0;
+            break;
+        }
+        presioneTeclaParaContinuar();
+        limpiarPantalla();
+
+    } while (option != '0');
+}*/
+
+void Flop(TipoBaraja *baraja, Stack* pilaCartas){
+    printf("Repartiendo el Flop...\n");
+    for (int i = 0; i < 3; i++) {
+        list_pushBack(baraja->cartasComunitarias, (TipoCarta*)SacarCarta(pilaCartas));
+    }
+
+    printf("Cartas Comunitarias:\n");
+    MostrarCartas(baraja->cartasComunitarias);
+    
+}
+
+void Turn(){
+
+    
+}
+
+void River(){
+
+    
+}
+
+
 int main(){
-    printf("d");
     TipoBaraja baraja;
 
     InicializarBaraja(&baraja);
 
     Stack* pilaCartas;
     pilaCartas = MezclarBaraja((&baraja)->listaCartas);
-    printf("d");
+    
     List* manoJugador = list_create();
     List* manoCPU = list_create();
 
-    // Repartir cartas 1ra ronda
-    for (int i = 0; i < 5; i++) {
+    // Repartir cartas iniciales
+    for (int i = 0; i < 2; i++) {
         list_pushBack(manoJugador, (TipoCarta*)SacarCarta(pilaCartas));
         list_pushBack(manoCPU, (TipoCarta*)SacarCarta(pilaCartas));
     }
 
     printf("Mano del jugador: \n");
     MostrarCartas(manoJugador);
-    printf("Mano de la CPU \n");
-    MostrarCartas(manoCPU);
+
+    Flop(&baraja, pilaCartas);
+    
+
+    list_clean(manoJugador);
+    list_clean(manoCPU);
+    stack_clean(pilaCartas);
     return 0;
 }
-
-
-/*void Poker(int chipCount) {
-    TipoBaraja baraja;
-    InicializarBaraja(&baraja);
-    Stack* pilaCartas = MezclarBaraja(baraja.listaCartas);
-
-    List* manoJugador = list_create();
-    List* manoCPU = list_create();
-
-    // Repartir cartas
-    for (int i = 0; i < 5; i++) {
-        list_pushBack(manoJugador, stack_pop(pilaCartas));
-        list_pushBack(manoCPU, stack_pop(pilaCartas));
-    }
-
-    // Mostrar mano del jugador
-    printf("Tu mano:\n");
-    MostrarMano(manoJugador);
-
-    // Mostrar mano de la CPU
-    printf("\nMano de la CPU:\n");
-    MostrarMano(manoCPU);
-
-    // Evaluar manos y determinar ganador
-    printf("\nGanador: ");
-    // Implementa la lógica de evaluación de manos aquí
-
-    // Liberar memoria
-    list_destroy(manoJugador);
-    list_destroy(manoCPU);
-    stack_destroy(pilaCartas);
-}*/

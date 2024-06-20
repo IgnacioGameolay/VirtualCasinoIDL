@@ -197,7 +197,7 @@ int main()
 			//Ruleta(chipCount);
 			break;
 		case '5':
-			JackpotGame();
+			JackpotGame(&chipCount);
 			break;
 		case '6':
 			//Craps(chipCount);

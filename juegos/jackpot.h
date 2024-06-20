@@ -23,6 +23,6 @@ typedef struct {
 TipoCasilla* CrearCasilla();
 TipoRodillo* CrearRodillo();
 int VerificarPremio(TipoRodillo* rodillo);
-int JackpotGame();
+int JackpotGame(int* chipCount);
 
 #endif

@@ -1,5 +1,13 @@
 #include "jackpot.h"
 
+
+/**
+ *
+ * Función para crear una casilla del rodillo de jackpot
+ *
+ * @return Retorna un puntero a la casilla creada por la funcion
+ */
+// 
 TipoCasilla* CrearCasilla() {
     
     TipoCasilla* casilla = (TipoCasilla*)malloc(sizeof(TipoCasilla));
@@ -21,6 +29,14 @@ TipoCasilla* CrearCasilla() {
     return casilla;
 }
 
+
+/**
+ *
+ * Función para crear el rodillo y agregarle las casillas del jackpot
+ *
+ * @return Retorna un puntero a al rodillo generado por la funcion
+ */
+// 
 TipoRodillo* CrearRodillo() {
     TipoRodillo* rodillo = (TipoRodillo*)malloc(sizeof(TipoRodillo));
     rodillo->listaCasillas = list_create();
@@ -34,6 +50,14 @@ TipoRodillo* CrearRodillo() {
     return rodillo;
 }
 
+/**
+ *
+ * Función para verificar las condiciones de victoria del usuario
+ *
+ * @param *rodillo Puntero al rodillo del jackpot
+ * @return Retorna 1 si el usuario gana, 0 si pierde
+ */
+// 
 int VerificarPremio(TipoRodillo* rodillo) {
     TipoCasilla* casilla1 = (TipoCasilla*)list_first(rodillo->listaCasillas);
     TipoCasilla* casilla2 = (TipoCasilla*)list_next(rodillo->listaCasillas);
@@ -46,18 +70,24 @@ int VerificarPremio(TipoRodillo* rodillo) {
     return 0; // Sin premio
 }
 
-int JackpotGame() {
+
+/**
+ *
+ * Función principal del juego.
+ *
+ */
+// 
+int JackpotGame(int *chipCount) {
 
     TipoRodillo* rodillo = CrearRodillo();
 
     char option; //Option del menu
     int apuesta = 0;
-    int chipCount = 10000;
     do {
         puts("========================================");
         puts(" Bienvenido a Jackpot.");
         puts("========================================");
-        printf("\n   Cantidad Actual de Fichas: %d\n\n", chipCount);
+        printf("\n   Cantidad Actual de Fichas: %d\n\n", *chipCount);
         puts("========================================");
         puts("(1) Jugar");
         puts("(2) Reglas");
@@ -83,17 +113,20 @@ int JackpotGame() {
                 casilla = (TipoCasilla*)list_next(rodillo->listaCasillas);
             }
             if (VerificarPremio(rodillo)){
-                chipCount += apuesta*1.5;
+                puts("========================================");
+                printf(" Has ganado %d fichas\n", (int)(apuesta*1.5));
+                puts(" ¡Bien Jugado!");
+                puts(" Volviendo al menu principal....");
+                puts("========================================");
+                (*chipCount) += apuesta*1.5;
             } else {
-                chipCount -= apuesta;
+                (*chipCount) -= apuesta;
                 puts("========================================");
                 printf(" Has perdido %d fichas\n", apuesta);
                 puts(" ¡Mejor suerte para la proxima!");
                 puts(" Volviendo al menu principal....");
                 puts("========================================");
             }
-            presioneTeclaParaContinuar();
-            limpiarPantalla();
             return 0;
             
         case '2':
