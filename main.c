@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include "tdas/list.h"
 #include "tdas/stack.h"
 #include "tdas/heap.h"
@@ -12,7 +13,7 @@
 //#include "juegos/higherorlower.h"
 //#include "juegos/poker.h"
 //#include "juegos/roulette.h"
-#include <string.h>
+
 #include "juegos/jackpot.h"
 
 
@@ -100,11 +101,29 @@ Stack* MezclarBaraja(List* listaCartas) {
 
 // Mostrar cartas de una baraja TipoBaraja
 void MostrarCartas(TipoBaraja *baraja){
-	TipoCarta* aux = list_first(baraja->listaCartas);
+	TipoCarta* carta = list_first(baraja->listaCartas);
 
-	while(aux != NULL){
-		printf("Palo: %c - Valor: %d\n", 	aux->palo, aux->valor);
-		aux = list_next(baraja->listaCartas);
+	while(carta != NULL){
+		if (carta->valor >= 2 && carta->valor <= 10) {
+			printf("%d%c ", carta->valor, carta->palo);
+		} else {
+			switch (carta->valor) {
+					case 1:
+							printf("A%c ", carta->palo);
+							break;
+					case 11:
+							printf("J%c ", carta->palo);
+							break;
+					case 12:
+							printf("Q%c ", carta->palo);
+							break;
+					case 13:
+							printf("K%c ", carta->palo);
+							break;
+			}
+		}
+		
+			carta = list_next(baraja->listaCartas);
 	}
 }
 
