@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include "../tdas/list.h"
+#include "../tdas/extra.h"
 
 typedef struct {
     char figura[10];
@@ -13,7 +14,7 @@ typedef struct {
 } TipoRodillo;
 
 TipoCasilla* CrearCasilla() {
-    srand(time(NULL));
+    
     TipoCasilla* casilla = (TipoCasilla*)malloc(sizeof(TipoCasilla));
     int figuraAleatoria = rand() % 4;
     switch (figuraAleatoria) {
@@ -36,11 +37,12 @@ TipoCasilla* CrearCasilla() {
 TipoRodillo* CrearRodillo() {
     TipoRodillo* rodillo = (TipoRodillo*)malloc(sizeof(TipoRodillo));
     rodillo->listaCasillas = list_create();
+
     
     for (int i = 0; i < 3; i++) {
         TipoCasilla* casilla = CrearCasilla();
         list_pushFront(rodillo->listaCasillas, casilla);
-        printf("Se agrego la Casilla %d: %s\n", i + 1, casilla->figura);
+        //printf("Se agrego la Casilla %d: %s\n", i + 1, casilla->figura);
     }
     return rodillo;
 }
@@ -58,23 +60,66 @@ int VerificarPremio(TipoRodillo* rodillo) {
 }
 
 int main() {
-    
+
     TipoRodillo* rodillo = CrearRodillo();
-    
-    TipoCasilla* casilla = (TipoCasilla*)list_first(rodillo->listaCasillas);
-    for (int i = 0; i < 3; i++) {
-        printf("Casilla %d: %s\n", i + 1, casilla->figura);
-        casilla = (TipoCasilla*)list_next(rodillo->listaCasillas);
-    }
 
-    if (VerificarPremio(rodillo)) {
-        printf("¡Felicidades, has ganado el premio!\n");
-    } else {
-        printf("Lo siento, sigue intentando...\n");
-    }
+    char option; //Option del menu
+    int apuesta = 0;
+    int chipCount = 10000;
+    do {
+        puts("========================================");
+        puts(" Bienvenido a Jackpot.");
+        puts("========================================");
+        printf("\n   Cantidad Actual de Fichas: %d\n\n", chipCount);
+        puts("========================================");
+        puts("(1) Jugar");
+        puts("(2) Reglas");
+        puts("(3) Volver al menú principal");
+        puts("========================================");
+        printf("Ingrese su opción: \n");
+        puts("========================================");
+        scanf(" %c", &option);
 
-    list_clean(rodillo->listaCasillas);
-    free(rodillo);
+        //Opciones del menu
+        switch (option) {
+        case '1':
+            puts("========================================");
+            puts("¡Muy bien, vamos a jugar!");
+            puts(" Ingrese su apuesta: ");
+            scanf("%d", &apuesta);
+            puts("========================================");
+            
+            printf("Resultados:\n");
+            TipoCasilla* casilla = (TipoCasilla*)list_first(rodillo->listaCasillas);
+            for (int i = 0; i < 3; i++) {
+                printf("Casilla %d: %s\n", i + 1, casilla->figura);
+                casilla = (TipoCasilla*)list_next(rodillo->listaCasillas);
+            }
+            if (VerificarPremio(rodillo)){
+                chipCount += apuesta*1.5;
+            } else {
+                chipCount -= apuesta;
+                puts("========================================");
+                printf(" Has perdido %d fichas\n", apuesta);
+                puts(" ¡Mejor suerte para la proxima!");
+                puts(" Volviendo al menu principal....");
+                puts("========================================");
+            }
+            presioneTeclaParaContinuar();
+            limpiarPantalla();
+            return 0;
+            
+        case '2':
+            puts("Las reglas son...");
+            break;
+        case '3':
+            //HigherOrLower(chipCount);
+            return 0;
+            break;
+        }
+        presioneTeclaParaContinuar();
+        limpiarPantalla();
 
+    } while (option != '0');
     return 0;
 }
