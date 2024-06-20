@@ -1,17 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "../tdas/list.h"
-#include "../tdas/extra.h"
-
-typedef struct {
-    char figura[10];
-} TipoCasilla;
-
-typedef struct {
-    List* listaCasillas;
-} TipoRodillo;
+#include "jackpot.h"
 
 TipoCasilla* CrearCasilla() {
     
@@ -59,7 +46,7 @@ int VerificarPremio(TipoRodillo* rodillo) {
     return 0; // Sin premio
 }
 
-int main() {
+int JackpotGame() {
 
     TipoRodillo* rodillo = CrearRodillo();
 

@@ -13,6 +13,7 @@
 //#include "juegos/poker.h"
 //#include "juegos/roulette.h"
 #include <string.h>
+#include "juegos/jackpot.h"
 
 
 
@@ -177,7 +178,7 @@ int main()
 			//Ruleta(chipCount);
 			break;
 		case '5':
-			//Jackpot(chipCount);
+			JackpotGame();
 			break;
 		case '6':
 			//Craps(chipCount);
