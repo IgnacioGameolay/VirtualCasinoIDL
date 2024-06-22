@@ -5,14 +5,14 @@
 #include "../tdas/list.h"
 #include "../tdas/stack.h"
 #include "../tdas/map.h"
-
+#include "../tdas/extra.h"
 
 typedef struct {
     int numeroRonda; // Número de la ronda (preflop, flop, turn, river)
     int apuestaActual; // Apuesta actual en la ronda
     int jugadorActual; // Índice del jugador que debe actuar
     int accionActual; // Acción actual (apostar, igualar, subir, pasar, retirarse)
-} RondaApuestas;
+} TipoRondaApuestas;
 
 
 typedef struct {
@@ -24,7 +24,7 @@ typedef struct {
 typedef struct {
         List *listaCartas;
         List *cartasComunitarias; // Cartas comunitarias (flop, turn, river)
-        RondaApuestas ronda; // Información de la ronda actual de apuestas
+        TipoRondaApuestas ronda; // Información de la ronda actual de apuestas
 } TipoBaraja;
 
 
@@ -136,63 +136,233 @@ TipoCarta* SacarCarta(Stack* barajada){
     return (TipoCarta*) stack_pop(barajada);
 }
 
-/*
-void RondaApuestas(int *cantFichas){
-    int apuesta = 0;
-    do {
-        puts("========================================");
-        puts(" Bienvenido a Jackpot.");
-        puts("========================================");
-        puts("(1) Apostar");
-        puts("(2) Fold");
-        puts("(3) Aumentar");
-        puts("========================================");
-        printf("Ingrese su opción: \n");
-        puts("========================================");
-        scanf(" %c", &option);
 
-        //Opciones del menu
-        switch (option) {
-        case '1':
-        case '2':
-            puts("Las reglas son...");
-            break;
-        case '3':
-            //HigherOrLower(chipCount);
-            return 0;
-            break;
-        }
-        presioneTeclaParaContinuar();
-        limpiarPantalla();
-
-    } while (option != '0');
-}*/
 
 void Flop(TipoBaraja *baraja, Stack* pilaCartas){
+    printf("========================================\n");
     printf("Repartiendo el Flop...\n");
     for (int i = 0; i < 3; i++) {
         list_pushBack(baraja->cartasComunitarias, (TipoCarta*)SacarCarta(pilaCartas));
     }
+    printf("========================================\n");
 
-    printf("Cartas Comunitarias:\n");
+    printf("Cartas Comunitarias en el Flop:\n");
     MostrarCartas(baraja->cartasComunitarias);
     
 }
 
-void Turn(){
+void Turn(TipoBaraja *baraja, Stack* pilaCartas){
+    printf("========================================\n");
+    printf("Repartiendo el Turn...\n");
+    list_pushBack(baraja->cartasComunitarias, (TipoCarta*)SacarCarta(pilaCartas));
+    printf("========================================\n");
 
+    printf("Cartas Comunitarias en el Turn:\n");
+    MostrarCartas(baraja->cartasComunitarias);
+}
+
+void River(TipoBaraja *baraja, Stack* pilaCartas){
+    printf("========================================\n");
+    printf("Repartiendo el River...\n");
+    list_pushBack(baraja->cartasComunitarias, (TipoCarta*)SacarCarta(pilaCartas));
+    printf("========================================\n");
+    
+    printf("Cartas Comunitarias en el River:\n");
+    MostrarCartas(baraja->cartasComunitarias);
     
 }
 
-void River(){
 
-    
+void Apostar(int *apuestaActual, int *fichasJugador) {
+    int cantidad;
+    do {
+        printf("Ingrese la cantidad a apostar: ");
+        scanf("%d", &cantidad);
+
+        if (*fichasJugador >= cantidad) {
+            *apuestaActual += cantidad;
+            *fichasJugador -= cantidad;
+            printf("El jugador ha apostado %d fichas. Apuesta actual: %d\n", cantidad, *apuestaActual);
+            break;  // Salir del bucle cuando la apuesta sea válida
+        } else {
+            printf("No tienes suficientes fichas para apostar. Tienes %d fichas.\n", *fichasJugador);
+        }
+    } while (1);  // Continuar pidiendo hasta que se haga una apuesta válida
 }
 
+
+void Igualar(int apuestaActual, int *fichasJugador) {
+    if (*fichasJugador >= apuestaActual) {
+        *fichasJugador -= apuestaActual;
+        printf("El jugador ha igualado con %d fichas.\n", apuestaActual);
+    } else {
+        printf("No tienes suficientes fichas para igualar.\n");
+    }
+}
+
+
+void Subir(int *apuestaActual, int *fichasJugador, int cantidad) {
+    if (*fichasJugador >= (cantidad + *apuestaActual)) {
+        *apuestaActual += cantidad;
+        *fichasJugador -= cantidad;
+        printf("El jugador ha subido la apuesta en %d fichas. Apuesta actual: %d\n", cantidad, *apuestaActual);
+    } else {
+        printf("No tienes suficientes fichas para subir la apuesta.\n");
+    }
+}
+
+
+void Pasar() {
+    printf("El jugador ha pasado su turno.\n");
+}
+
+void Retirarse() {
+    printf("El jugador se ha retirado del juego.\n");
+}
+
+
+
+int AccionesBot(int *fichasBot, int *apuestaActual){
+    
+    int accion = 1 + rand() % 2; // Genera un número aleatorio entre 0 y 3
+    int cantidad;
+    switch (accion) {
+        case 1:  // buena mano
+            // Bot siempre sube con una buena mano
+            cantidad = *apuestaActual + (rand() % 100 + 50);  // Subir entre 50 y 150 fichas
+
+            if (*fichasBot >= cantidad) {
+                *apuestaActual += cantidad;
+                *fichasBot -= cantidad;
+                printf("El bot ha subido la apuesta en %d fichas. Apuesta actual: %d\n", cantidad, *apuestaActual);
+            } else {
+                printf("El bot no tiene suficientes fichas para subir.\n");
+            }
+            break;
+
+        case 2:
+            printf("El bot ha pasado su turno.\n");
+            break;
+    }
+    return accion;
+}
+
+void RondaApuestas(int *cantFichasJugador, int *apuestaActual, int *cantFichasBot, int *cantFichasBote){
+    int apuestaAux = 0; //variable de apuesta auxiliar, para igualar o subir
+    char option;
+    int accionBot;
+    do {
+        puts("========================================");
+        printf("\n   Cantidad Actual de Fichas del Bot: %d\n\n", *cantFichasBot);
+        puts("========================================");
+        accionBot = AccionesBot(cantFichasBot, apuestaActual);
+
+        //El bot sube la apuesta
+        if (accionBot == 1){
+            //
+            puts("========================================");
+            printf("\n   Cantidad Actual de Fichas del Jugador: %d\n\n", *cantFichasJugador);
+            puts("========================================");
+            puts("(1) Subir");
+            puts("(2) Igualar");
+            puts("(3) Retirarse");
+            puts("========================================");
+            printf("Ingrese su opción: \n");
+            puts("========================================");
+            scanf(" %c", &option);
+
+                switch (option) {
+                    case '1':
+                        Apostar(apuestaActual, cantFichasJugador);
+                        return;
+                    case '2':
+                        Igualar(*apuestaActual, cantFichasJugador);
+                        return;
+                    case '3':
+                        Retirarse();
+                        return;
+                    default:
+                        printf("Opción no válida. Intente nuevamente.\n");
+                        presioneTeclaParaContinuar();
+                }
+        } else {
+
+            do {
+                puts("========================================");
+                printf("\n   Cantidad Actual de Fichas del Jugador: %d\n\n", *cantFichasJugador);
+                puts("========================================");
+                puts("(1) Apostar/Subir");
+                puts("(2) Pasar");
+                puts("(3) Retirarse");
+                puts("========================================");
+                printf("Ingrese su opción: \n");
+                puts("========================================");
+                scanf(" %c", &option);
+
+                switch (option) {
+                    case '1':
+                        Apostar(apuestaActual, cantFichasJugador);
+                        return;
+                    case '2':
+                        Pasar();
+                        return;
+                    case '3':
+                        Retirarse();
+                        return;
+                    default:
+                        printf("Opción no válida. Intente nuevamente.\n");
+                        presioneTeclaParaContinuar();
+                }
+            } while (1);
+        }
+
+        } while (1);
+
+        
+            
+        }
+    
+void TurnoJugador(int *fichasJugador, int *apuestaActual) {
+    printf("Turno del jugador\n");
+    int opcion;
+    printf("1. Apostar\n2. Igualar\n3. Subir\n4. Pasar\n5. Retirarse\n");
+    printf("Seleccione una opción: ");
+    scanf("%d", &opcion);
+
+    switch (opcion) {
+        case 1:
+            Apostar(apuestaActual, fichasJugador);
+            break;
+        case 2:
+            Igualar(*apuestaActual, fichasJugador);
+            break;
+        case 3: {
+            int cantidad;
+            printf("Ingrese la cantidad a subir: ");
+            scanf("%d", &cantidad);
+            Subir(apuestaActual, fichasJugador, cantidad);
+            break;
+        }
+        case 4:
+            Pasar();
+            break;
+        case 5:
+            Retirarse();
+            *fichasJugador = 0;  // Se retira del juego
+            break;
+        default:
+            printf("Opción inválida. Por favor, seleccione una opción válida.\n");
+            break;
+    }
+}
 
 int main(){
+    int cantFichasJugador = 10000;
+    int cantFichasBot = 1000;
+    int cantFichasBote = 0;
+    int apuesta = 0;
+    
     TipoBaraja baraja;
-
     InicializarBaraja(&baraja);
 
     Stack* pilaCartas;
@@ -207,12 +377,54 @@ int main(){
         list_pushBack(manoCPU, (TipoCarta*)SacarCarta(pilaCartas));
     }
 
-    printf("Mano del jugador: \n");
+    puts("========================================");
+    puts(" Bienvenido a Poker.");
+    puts("========================================");
+    puts("========================================");
+    /*
+    puts("Repartendo Mano del Jugador:");
     MostrarCartas(manoJugador);
-
-    Flop(&baraja, pilaCartas);
+    puts("========================================");
     
+    Flop(&baraja, pilaCartas);
+    RondaApuestas(&cantFichasJugador, &apuesta, &cantFichasBot, &cantFichasBote);    
+    
+    Turn(&baraja, pilaCartas);
+    RondaApuestas(&cantFichasJugador, &apuesta, &cantFichasBot, &cantFichasBote);    
+    
+    River(&baraja, pilaCartas);
+    RondaApuestas(&cantFichasJugador, &apuesta, &cantFichasBot, &cantFichasBote);    
+    */
 
+
+    // Empezamos el ciclo de apuestas
+    while (fichasJugador > 0 && fichasBot > 0) {
+        printf("========================================\n");
+        printf("Inicio de una nueva ronda de apuestas\n");
+        printf("========================================\n");
+
+        // Turno del bot primero
+        DesicionesBot(&fichasBot, &apuestaActual);
+
+        // Si el bot no ha pasado, el jugador tiene que actuar
+        if (apuestaActual > 0) {
+            TurnoJugador(&fichasJugador, &apuestaActual);
+        }
+
+        // Continuar con la siguiente ronda si ambos jugadores tienen fichas
+        if (fichasJugador > 0 && fichasBot > 0) {
+            // Simular las siguientes rondas del juego (Flop, Turn, River)
+            Flop(&baraja, pilaCartas);
+            Turn(&baraja, pilaCartas);
+            River(&baraja, pilaCartas);
+
+            // Resetear apuestas para la siguiente ronda
+            apuestaActual = 0;
+        }
+    }
+
+    printf("Fin del juego. Gracias por jugar.\n");
+    
     list_clean(manoJugador);
     list_clean(manoCPU);
     stack_clean(pilaCartas);

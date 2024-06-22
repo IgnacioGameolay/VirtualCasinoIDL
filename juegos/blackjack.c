@@ -5,7 +5,7 @@
 #include "../tdas/list.h"
 #include "../tdas/stack.h"
 #include "../tdas/map.h"
-
+#include "../tdas/extra.h"
 typedef struct {
     int valor;  // 1 para As, 11 para J, 12 para Q, 13 para K, y 2-10 para las cartas numéricas
     int clave;
@@ -167,6 +167,8 @@ void mostrarReglas(){
 
   printf("================================\n");
 
+  limpiarPantalla();
+
 }
 
 
@@ -231,6 +233,7 @@ void Blackjack(int chipCount){
   printf("¿Desea pedir otra carta? (s/n): ");
 
   scanf(" %c", &respuestaJugador);
+  
   while (respuestaJugador == 's' && puntajeJugador < 21){
     list_pushBack(cartasJugador, (TipoCarta*)SacarCarta(pilaCartas));
     puntajeJugador = calcularPuntaje(cartasJugador);
@@ -244,7 +247,49 @@ void Blackjack(int chipCount){
     list_pushBack(cartasDealer, (TipoCarta*)SacarCarta(pilaCartas));
     puntajeDealer = calcularPuntaje(cartasDealer);
   }
-  
-  
-  
+
+  printf("Puntaje del jugador: %d\n", puntajeJugador);
+  printf("Puntaje del dealer: %d\n", puntajeDealer);
+  // Determinar el ganador
+  if (puntajeJugador > 21){
+    printf("Te has pasado de 21, pierdes la apuesta.\n");
+    chipCount -= apuesta;
+  }
+  if (puntajeDealer > 21){
+    printf("El crupier se ha pasado de 21, ganaste la apuesta.\n");
+    chipCount += apuesta * 2;
+  }
+
+  if (puntajeJugador > puntajeDealer){
+    printf("Ganaste la apuesta.\n");
+    chipCount += apuesta * 2;
+  }
+
+  if (puntajeJugador < puntajeDealer){
+    printf("Perdiste la apuesta.\n");
+    chipCount -= apuesta;
+  }
+  if (puntajeJugador == puntajeDealer){
+    printf("Es un empate, se devuelve la apuesta.\n");
+  }
+
+  printf("Puntaje final: %d\n", chipCount);
+
+  printf("================================\n");
+
+  printf("¿Desea volver a jugar? (s/n): ");
+  scanf(" %c", &respuesta);
+  if (respuesta == 's'){
+    Blackjack(chipCount);
+  }
+  else{
+    printf("Gracias por jugar.\n");
+  }
+}
+
+int main(){
+  int chipCount = 1000;
+  Blackjack(chipCount);
+
+  return 0;
 }
