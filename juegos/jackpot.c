@@ -77,7 +77,7 @@ int VerificarPremio(TipoRodillo* rodillo) {
  *
  */
 // 
-int JackpotGame(int *chipCount) {
+int JackpotGame(int *cantFichasJugador) {
 
     TipoRodillo* rodillo = CrearRodillo();
 
@@ -87,7 +87,7 @@ int JackpotGame(int *chipCount) {
         puts("========================================");
         puts(" Bienvenido a Jackpot.");
         puts("========================================");
-        printf("\n   Cantidad Actual de Fichas: %d\n\n", *chipCount);
+        printf("\n   Cantidad Actual de Fichas: %d\n\n", *cantFichasJugador);
         puts("========================================");
         puts("(1) Jugar");
         puts("(2) Reglas");
@@ -104,6 +104,13 @@ int JackpotGame(int *chipCount) {
             puts("¡Muy bien, vamos a jugar!");
             puts(" Ingrese su apuesta: ");
             scanf("%d", &apuesta);
+            if (apuesta <= 0 || apuesta >= *cantFichasJugador){
+                while (apuesta <= 0 || apuesta >= *cantFichasJugador){
+                    puts(" Ingrese una apuesta válida: ");
+                    scanf("%d", &apuesta);
+                }
+            }
+            
             puts("========================================");
             
             printf("Resultados:\n");
@@ -118,9 +125,9 @@ int JackpotGame(int *chipCount) {
                 puts(" ¡Bien Jugado!");
                 puts(" Volviendo al menu principal....");
                 puts("========================================");
-                (*chipCount) += apuesta*1.5;
+                (*cantFichasJugador) += apuesta*1.5;
             } else {
-                (*chipCount) -= apuesta;
+                (*cantFichasJugador) -= apuesta;
                 puts("========================================");
                 printf(" Has perdido %d fichas\n", apuesta);
                 puts(" ¡Mejor suerte para la proxima!");
@@ -133,7 +140,7 @@ int JackpotGame(int *chipCount) {
             puts("Las reglas son...");
             break;
         case '3':
-            //HigherOrLower(chipCount);
+            //HigherOrLower(cantFichasJugador);
             return 0;
             break;
         }
