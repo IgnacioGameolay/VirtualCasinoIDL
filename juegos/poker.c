@@ -514,7 +514,12 @@ List* CrearManoCompletaPerso(){
     
     for (int i = 0; i < 7; i++){
         TipoCarta *carta = (TipoCarta *)malloc(sizeof(TipoCarta));
-        carta->valor = 1 + i;
+        if (i < 4){
+            carta->valor = 4;
+        } else {
+            carta->valor = 1 + i;
+        }
+        
         carta->clave = 1 + rand() % 4;
         carta->palo = 'C';
         list_pushBack(mano, carta);
@@ -592,6 +597,111 @@ int EsPareja(List* manoCompleta){
     else if (cantParejas == 2) return 2;
     return 0;
 }
+
+
+int EsTrio(List* manoCompleta){
+    Map* mapaFrecuenciaValores = NULL;
+    mapaFrecuenciaValores = map_create(is_equal_int);
+
+    TipoCarta* carta = NULL;
+    for (carta = list_first(manoCompleta); carta != NULL; carta = list_next(manoCompleta)) {
+
+        MapPair* pair = map_search(mapaFrecuenciaValores, &carta->valor);
+
+        if (pair == NULL){
+            int* frecuenciaValor = (int*)malloc(sizeof(int));
+            *frecuenciaValor = 1;
+            map_insert(mapaFrecuenciaValores, &carta->valor, frecuenciaValor);
+        } else {
+            (*((int *)pair->value))++;
+        }
+    }
+
+    //printf("Cantidad de apariciones de cada valor en la mano:\n");
+    MapPair *current_pair = map_first(mapaFrecuenciaValores);
+    while (current_pair != NULL) {
+        int frecuencia = *((int *)current_pair->value);
+        if (frecuencia == 3){
+            map_clean(mapaFrecuenciaValores);
+            free(mapaFrecuenciaValores);
+            return 1;
+        }
+        current_pair = map_next(mapaFrecuenciaValores);
+    }
+    return 0;
+}
+
+int EsFullHouse(List* manoCompleta){
+    Map* mapaFrecuenciaValores = NULL;
+    mapaFrecuenciaValores = map_create(is_equal_int);
+
+    TipoCarta* carta = NULL;
+    for (carta = list_first(manoCompleta); carta != NULL; carta = list_next(manoCompleta)) {
+
+        MapPair* pair = map_search(mapaFrecuenciaValores, &carta->valor);
+
+        if (pair == NULL){
+            int* frecuenciaValor = (int*)malloc(sizeof(int));
+            *frecuenciaValor = 1;
+            map_insert(mapaFrecuenciaValores, &carta->valor, frecuenciaValor);
+        } else {
+            (*((int *)pair->value))++;
+        }
+    }
+
+    //printf("Cantidad de apariciones de cada valor en la mano:\n");
+    int cantParejas = 0;
+    int cantTrios = 0;
+    MapPair *current_pair = map_first(mapaFrecuenciaValores);
+    while (current_pair != NULL) {
+        int frecuencia = *((int *)current_pair->value);
+        if (cantParejas == 1 && cantTrios == 1){
+            map_clean(mapaFrecuenciaValores);
+            free(mapaFrecuenciaValores);
+            return 1;
+        }
+        if (frecuencia == 2) cantParejas++;
+        if (frecuencia == 3) cantTrios++;
+        current_pair = map_next(mapaFrecuenciaValores);
+    }
+
+    map_clean(mapaFrecuenciaValores);
+    free(mapaFrecuenciaValores);
+
+    return 0;
+}
+
+int EsPoker(List* manoCompleta){
+    Map* mapaFrecuenciaValores = NULL;
+    mapaFrecuenciaValores = map_create(is_equal_int);
+
+    TipoCarta* carta = NULL;
+    for (carta = list_first(manoCompleta); carta != NULL; carta = list_next(manoCompleta)) {
+
+        MapPair* pair = map_search(mapaFrecuenciaValores, &carta->valor);
+
+        if (pair == NULL){
+            int* frecuenciaValor = (int*)malloc(sizeof(int));
+            *frecuenciaValor = 1;
+            map_insert(mapaFrecuenciaValores, &carta->valor, frecuenciaValor);
+        } else {
+            (*((int *)pair->value))++;
+        }
+    }
+
+    //printf("Cantidad de apariciones de cada valor en la mano:\n");
+    MapPair *current_pair = map_first(mapaFrecuenciaValores);
+    while (current_pair != NULL) {
+        int frecuencia = *((int *)current_pair->value);
+        if (frecuencia == 4){
+            map_clean(mapaFrecuenciaValores);
+            free(mapaFrecuenciaValores);
+            return 1;
+        }
+        current_pair = map_next(mapaFrecuenciaValores);
+    }
+    return 0;
+}
 /// Funcion para obtener las 7 cartas, 2 del jugador y 5 de la mesa 
 void ObtenerManoCompleta(List* manoCompleta, List* cartasJugador, TipoBaraja *baraja) {
     TipoCarta* carta = NULL;
@@ -643,23 +753,34 @@ int main(){
     MostrarCartas(manoJugadorCompleta);
     printf("========================================\n");
 
-    int esPareja = EsPareja(manoJugadorCompleta);
-    if (esPareja){
-        if (esPareja == 1){
-            printf("El jugador tiene PAREJA SIMPLE!!\n");
-        } else {
-            printf("El jugador tiene PAREJA DOBLE!!\n");
+    if (EsPoker(manoJugadorCompleta)){
+        printf("El jugador tiene POKER!!\n");
+    }
+    else if (EsFullHouse(manoJugadorCompleta)){
+        printf("El jugador tiene FULL HOUSE!!\n");
+    }
+    else if (EsTrio(manoJugadorCompleta)){
+        printf("El jugador tiene UN TRIOO!!\n");
+    } else {
+        int esPareja = EsPareja(manoJugadorCompleta);
+        if (esPareja){
+            if (esPareja == 1){
+                printf("El jugador tiene PAREJA SIMPLE!!\n");
+            } else {
+                printf("El jugador tiene PAREJA DOBLE!!\n");
+            }
+        }
+        else if (EsEscaleraDeColor(manoJugadorCompleta)){
+            printf("El jugador tiene una escalera de color!!\n");
+        }
+        else if (EsColor(manoJugadorCompleta)){
+            printf("El jugador tiene COLOR!!\n");
+        }
+        else if (EsEscalera(manoJugadorCompleta)){
+            printf( "El jugador tiene ESCALERA!!\n");
         }
     }
-    else if (EsEscaleraDeColor(manoPerso)){
-        printf("El jugador tiene una escalera de color!!\n");
-    }
-    else if (EsColor(manoPerso)){
-        printf("El jugador tiene COLOR!!\n");
-    }
-    else if (EsEscalera(manoPerso)){
-        printf( "El jugador tiene ESCALERA!!\n");
-    }
+    
     
 
 
