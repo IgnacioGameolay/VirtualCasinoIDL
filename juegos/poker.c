@@ -495,6 +495,19 @@ void River(TipoBaraja *baraja, Stack* pilaCartas){
     MostrarCartas(baraja->cartasComunitarias);
 
 }
+// Función para comparar dos cartas por valor (para ordenarlas)
+int CompararCartasMayorAMenor(const void *data1, const void *data2) {
+    TipoCarta *carta1 = (TipoCarta *)data1;
+    TipoCarta *carta2 = (TipoCarta *)data2;
+
+    if (carta1->valor > carta2->valor) {
+        return -1;
+    } else if (carta1->valor < carta2->valor) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 List* CrearManoCompletaPerso(){
     List* mano = list_create();
@@ -542,6 +555,43 @@ int EsEscaleraDeColor(List* manoCompleta){
     return 0;
 }
 
+int is_equal_int(void *key1, void *key2) {
+    return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
+}
+int EsPareja(List* manoCompleta){
+    Map* mapaFrecuenciaValores = NULL;
+    mapaFrecuenciaValores = map_create(is_equal_int);
+
+    TipoCarta* carta = NULL;
+    for (carta = list_first(manoCompleta); carta != NULL; carta = list_next(manoCompleta)) {
+        
+        MapPair* pair = map_search(mapaFrecuenciaValores, &carta->valor);
+
+        if (pair == NULL){
+            int* frecuenciaValor = (int*)malloc(sizeof(int));
+            *frecuenciaValor = 1;
+            map_insert(mapaFrecuenciaValores, &carta->valor, frecuenciaValor);
+        } else {
+            (*((int *)pair->value))++;
+        }
+    }
+    
+    //printf("Cantidad de apariciones de cada valor en la mano:\n");
+    int cantParejas = 0;
+    MapPair *current_pair = map_first(mapaFrecuenciaValores);
+    while (current_pair != NULL) {
+        int frecuencia = *((int *)current_pair->value);
+        if (frecuencia == 2) cantParejas++;
+        current_pair = map_next(mapaFrecuenciaValores);
+    }
+    
+    map_clean(mapaFrecuenciaValores);
+    free(mapaFrecuenciaValores);
+    
+    if (cantParejas == 1) return 1;
+    else if (cantParejas == 2) return 2;
+    return 0;
+}
 /// Funcion para obtener las 7 cartas, 2 del jugador y 5 de la mesa 
 void ObtenerManoCompleta(List* manoCompleta, List* cartasJugador, TipoBaraja *baraja) {
     TipoCarta* carta = NULL;
@@ -590,10 +640,18 @@ int main(){
     printf("========================================\n");
     puts("Mostrando Mano Completa del Jugador (Ordenada):");
     ObtenerManoCompleta(manoJugadorCompleta, manoJugador, &baraja);
-    MostrarCartas(manoPerso);
+    MostrarCartas(manoJugadorCompleta);
     printf("========================================\n");
-    
-    if (EsEscaleraDeColor(manoPerso)){
+
+    int esPareja = EsPareja(manoJugadorCompleta);
+    if (esPareja){
+        if (esPareja == 1){
+            printf("El jugador tiene PAREJA SIMPLE!!\n");
+        } else {
+            printf("El jugador tiene PAREJA DOBLE!!\n");
+        }
+    }
+    else if (EsEscaleraDeColor(manoPerso)){
         printf("El jugador tiene una escalera de color!!\n");
     }
     else if (EsColor(manoPerso)){
