@@ -200,3 +200,42 @@ void list_clean(List *L) {
   L->current = NULL;
   L->size = 0;
 }
+
+void list_sort(List *L, int (*compare)(const void *, const void *)) {
+    if (L == NULL || L->head == NULL || compare == NULL) {
+        return; // Lista no inicializada, vacía o función de comparación inválida
+    }
+
+    Node *sorted = NULL;
+    Node *current = L->head;
+
+    while (current != NULL) {
+        Node *next = current->next;
+
+        // Insertar current en la lista ordenada
+        if (sorted == NULL || compare(current->data, sorted->data) < 0) {
+            // Insertar al principio de la lista ordenada
+            current->next = sorted;
+            sorted = current;
+        } else {
+            // Buscar el lugar de inserción
+            Node *temp = sorted;
+            while (temp->next != NULL && compare(current->data, temp->next->data) >= 0) {
+                temp = temp->next;
+            }
+            current->next = temp->next;
+            temp->next = current;
+        }
+
+        current = next;
+    }
+
+    L->head = sorted;
+
+    // Actualizar tail
+    Node *tail = sorted;
+    while (tail->next != NULL) {
+        tail = tail->next;
+    }
+    L->tail = tail;
+}

@@ -1,2 +1,3 @@
 compile = "gcc tdas/*.c juegos/jackpot.c main.c -Wno-unused-result -o main"
 run = "./main"
+

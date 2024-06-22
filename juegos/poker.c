@@ -27,6 +27,139 @@ typedef struct {
         TipoRondaApuestas ronda; // Información de la ronda actual de apuestas
 } TipoBaraja;
 
+// Define los valores de las manos
+enum {
+    CARTA_ALTA,
+    PAREJA,
+    DOBLE_PAREJA,
+    TRIO,
+    ESCALERA,
+    COLOR,
+    FULL_HOUSE,
+    POKER,
+    ESCALERA_COLOR,
+    ESCALERA_REAL
+};
+
+
+// Función para comparar dos cartas por valor (para ordenarlas)
+int CompararCartas(const void *data1, const void *data2) {
+    TipoCarta *carta1 = (TipoCarta *)data1;
+    TipoCarta *carta2 = (TipoCarta *)data2;
+
+    if (carta1->valor < carta2->valor) {
+        return -1;
+    } else if (carta1->valor > carta2->valor) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+/*
+// Prototipos de las funciones auxiliares
+int EsEscaleraReal(List *mano) {
+    // Verificar si la mano tiene al menos 5 cartas
+    if (list_size(mano) < 5) {
+        return 0;
+    }
+
+    // Ordenar la mano por valor de carta de forma ascendente
+    list_sort(mano, &CompareCartas);
+
+    // Verificar si las cinco cartas más altas son una escalera real
+    TipoCarta *carta = list_first(mano);
+    int valorEsperado = 10;
+    char palo = carta->palo;
+    for (int i = 0; i < 5; i++) {
+        if (carta->valor != valorEsperado || carta->palo != palo) {
+            return 0;
+        }
+        carta = list_next(mano);
+        valorEsperado++;
+    }
+
+    return 1;
+}
+
+/*int EsEscaleraColor(List* mano);
+int EsPoker(List* mano);
+int EsFullHouse(List* mano);
+int EsColor(List* mano);
+int EsEscalera(List* mano);
+int EsTrio(List* mano);
+int EsDoblePareja(List* mano);
+int EsPareja(List* mano);
+
+
+
+
+
+
+int EvaluarMano(List* mano) {
+    if (EsEscaleraReal(mano)) return ESCALERA_REAL;
+    /*if (EsEscaleraColor(mano)) return ESCALERA_COLOR;
+    if (EsPoker(mano)) return POKER;
+    if (EsFullHouse(mano)) return FULL_HOUSE;
+    if (EsColor(mano)) return COLOR;
+    if (EsEscalera(mano)) return ESCALERA;
+    if (EsTrio(mano)) return TRIO;
+    if (EsDoblePareja(mano)) return DOBLE_PAREJA;
+    if (EsPareja(mano)) return PAREJA;
+
+    return CARTA_ALTA; // Si ninguna otra combinación se cumple, es carta alta
+}
+
+
+int CompararManos(List* mano1, List* mano2) {
+    int puntuacion1 = EvaluarMano(mano1);
+    int puntuacion2 = EvaluarMano(mano2);
+
+    if (puntuacion1 > puntuacion2) return 1;
+    if (puntuacion1 < puntuacion2) return 2;
+
+    // Si las puntuaciones son iguales, se debe comparar carta por carta
+    // Aquí se muestra un esqueleto de cómo podría hacerse
+
+    // Función para desempatar dos manos del mismo tipo
+    int Desempatar(List* mano1, List* mano2) {
+        // Aquí se debe implementar la lógica para desempatar manos del mismo tipo
+        return 0; // Retornar 0 si es empate, 1 si gana mano1, 2 si gana mano2
+    }
+
+    return Desempatar(mano1, mano2);
+}
+
+void ObtenerManoCompleta(List* manoCompleta, List* cartasJugador, List* cartasComunitarias) {
+    TipoCarta* carta;
+    for (carta = list_first(cartasJugador); carta != NULL; carta = list_next(cartasJugador)) {
+        list_pushBack(manoCompleta, carta);
+    }
+    for (carta = list_first(cartasComunitarias); carta != NULL; carta = list_next(cartasComunitarias)) {
+        list_pushBack(manoCompleta, carta);
+    }
+}
+
+void VerificarGanador(List* cartasJugador, List* cartasBot, List* cartasComunitarias) {
+    List* manoJugador = list_create();
+    List* manoBot = list_create();
+
+    ObtenerManoCompleta(manoJugador, cartasJugador, cartasComunitarias);
+    ObtenerManoCompleta(manoBot, cartasBot, cartasComunitarias);
+
+    int resultado = CompararManos(manoJugador, manoBot);
+
+    if (resultado == 1) {
+        printf("El jugador gana.\n");
+    } else if (resultado == 2) {
+        printf("El bot gana.\n");
+    } else {
+        printf("Es un empate.\n");
+    }
+
+    list_clean(manoJugador);
+    list_clean(manoBot);
+}
+*/
 
 //Funcion para inicializar una baraja principal con las 52 cartas existentes (baraja inglesa).
 void InicializarBaraja(TipoBaraja *baraja) { 
@@ -142,39 +275,7 @@ TipoCarta* SacarCarta(Stack* barajada){
 
 
 
-void Flop(TipoBaraja *baraja, Stack* pilaCartas){
-    printf("========================================\n");
-    printf("Repartiendo el Flop...\n");
-    for (int i = 0; i < 3; i++) {
-        list_pushBack(baraja->cartasComunitarias, (TipoCarta*)SacarCarta(pilaCartas));
-    }
-    printf("========================================\n");
 
-    printf("Cartas Comunitarias en el Flop:\n");
-    MostrarCartas(baraja->cartasComunitarias);
-    
-}
-
-void Turn(TipoBaraja *baraja, Stack* pilaCartas){
-    printf("========================================\n");
-    printf("Repartiendo el Turn...\n");
-    list_pushBack(baraja->cartasComunitarias, (TipoCarta*)SacarCarta(pilaCartas));
-    printf("========================================\n");
-
-    printf("Cartas Comunitarias en el Turn:\n");
-    MostrarCartas(baraja->cartasComunitarias);
-}
-
-void River(TipoBaraja *baraja, Stack* pilaCartas){
-    printf("========================================\n");
-    printf("Repartiendo el River...\n");
-    list_pushBack(baraja->cartasComunitarias, (TipoCarta*)SacarCarta(pilaCartas));
-    printf("========================================\n");
-    
-    printf("Cartas Comunitarias en el River:\n");
-    MostrarCartas(baraja->cartasComunitarias);
-    
-}
 
 
 void Apostar(int *apuestaActual, int *fichasJugador) {
@@ -228,10 +329,10 @@ void Retirarse() {
 
 int AccionesBot(int *fichasBot, int *apuestaActual){
     
-    int accion = 1 + rand() % 2; // Genera un número aleatorio entre 0 y 3
+    int accion = 1 + rand() % 2; // Generar num entre 1 y 2 
     int cantidad;
     switch (accion) {
-        case 1:  // buena mano
+        case 1:  // subir apuesta
             // Bot siempre sube con una buena mano
             cantidad = *apuestaActual + (rand() % 100 + 50);  // Subir entre 50 y 150 fichas
 
@@ -244,7 +345,7 @@ int AccionesBot(int *fichasBot, int *apuestaActual){
             }
             break;
 
-        case 2:
+        case 2: // pasar turno
             printf("El bot ha pasado su turno.\n");
             break;
     }
@@ -360,6 +461,95 @@ void TurnoJugador(int *fichasJugador, int *apuestaActual) {
     }
 }
 
+
+void Flop(TipoBaraja *baraja, Stack* pilaCartas){
+    printf("========================================\n");
+    printf("Repartiendo el Flop...\n");
+    for (int i = 0; i < 3; i++) {
+        list_pushBack(baraja->cartasComunitarias, (TipoCarta*)SacarCarta(pilaCartas));
+    }
+    printf("========================================\n");
+
+    printf("Cartas Comunitarias en el Flop:\n");
+    MostrarCartas(baraja->cartasComunitarias);
+
+}
+
+void Turn(TipoBaraja *baraja, Stack* pilaCartas){
+    printf("========================================\n");
+    printf("Repartiendo el Turn...\n");
+    list_pushBack(baraja->cartasComunitarias, (TipoCarta*)SacarCarta(pilaCartas));
+    printf("========================================\n");
+
+    printf("Cartas Comunitarias en el Turn:\n");
+    MostrarCartas(baraja->cartasComunitarias);
+}
+
+void River(TipoBaraja *baraja, Stack* pilaCartas){
+    printf("========================================\n");
+    printf("Repartiendo el River...\n");
+    list_pushBack(baraja->cartasComunitarias, (TipoCarta*)SacarCarta(pilaCartas));
+    printf("========================================\n");
+
+    printf("Cartas Comunitarias en el River:\n");
+    MostrarCartas(baraja->cartasComunitarias);
+
+}
+
+List* CrearManoCompletaPerso(){
+    List* mano = list_create();
+    
+    for (int i = 0; i < 7; i++){
+        TipoCarta *carta = (TipoCarta *)malloc(sizeof(TipoCarta));
+        carta->valor = 1 + i;
+        carta->clave = 1 + rand() % 4;
+        carta->palo = 'C';
+        list_pushBack(mano, carta);
+    }
+    
+    list_sort(mano, CompararCartas);
+    return mano;
+}
+
+int EsColor(List* manoCompleta){
+    TipoCarta* cartaActual = NULL;
+    
+    TipoCarta* cartaPrimera = list_first(manoCompleta);
+    char palo = cartaPrimera->palo;
+    
+    for (int i = 0; i < 5; i++){
+        cartaActual = list_next(manoCompleta);   
+        if (cartaActual->palo != palo) return 0;
+    }
+    return 1;
+}
+
+int EsEscalera(List* manoCompleta){
+    TipoCarta* cartaActual = NULL;
+
+    TipoCarta* cartaPrimera = list_first(manoCompleta);
+    int valorPrimeraCarta = cartaPrimera->valor;
+
+    for (int i = 0; i < 5; i++){
+        cartaActual = list_next(manoCompleta);   
+        if (cartaActual->valor != cartaPrimera->valor + i +1) return 0;
+    }
+    return 1;
+}
+
+/// Funcion para obtener las 7 cartas, 2 del jugador y 5 de la mesa 
+void ObtenerManoCompleta(List* manoCompleta, List* cartasJugador, TipoBaraja *baraja) {
+    TipoCarta* carta = NULL;
+    for (carta = list_first(cartasJugador); carta != NULL; carta = list_next(cartasJugador)) {
+        list_pushBack(manoCompleta, carta);
+    }
+    for (carta = list_first(baraja->cartasComunitarias); carta != NULL; 
+        carta = list_next(baraja->cartasComunitarias)) {
+        list_pushBack(manoCompleta, carta);
+    }
+    list_sort(manoCompleta, CompararCartas);
+}
+
 int main(){
     int cantFichasJugador = 10000;
     int cantFichasBot = 1000;
@@ -373,19 +563,58 @@ int main(){
     pilaCartas = MezclarBaraja((&baraja)->listaCartas);
     
     List* manoJugador = list_create();
+    List* manoJugadorCompleta = list_create();
+    
     List* manoCPU = list_create();
+    List* manoCPUCompleta = list_create();
 
+    List* manoPerso = NULL;
+    manoPerso = CrearManoCompletaPerso();
+    
     // Repartir cartas iniciales
     for (int i = 0; i < 2; i++) {
         list_pushBack(manoJugador, (TipoCarta*)SacarCarta(pilaCartas));
         list_pushBack(manoCPU, (TipoCarta*)SacarCarta(pilaCartas));
     }
+    printf("========================================\n");
+    puts("Repartendo Mano del Jugador:");
+    MostrarCartas(manoJugador);
+    Flop(&baraja, pilaCartas);
+    Turn(&baraja, pilaCartas);
+    River(&baraja, pilaCartas);
+    printf("========================================\n");
+    puts("Mostrando Mano Completa del Jugador (Ordenada):");
+    ObtenerManoCompleta(manoJugadorCompleta, manoJugador, &baraja);
+    MostrarCartas(manoPerso);
+    printf("========================================\n");
+    if (EsColor(manoPerso)){
+        printf("El jugador tiene COLOR!!\n");
+    }
+    if (EsEscalera(manoPerso)){
+        printf( "El jugador tiene ESCALERA!!\n");
+    }
+    
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    /*
     puts("========================================");
     puts(" Bienvenido a Poker.");
     puts("========================================");
     puts("========================================");
-    /*
+
     puts("Repartendo Mano del Jugador:");
     MostrarCartas(manoJugador);
     puts("========================================");
@@ -402,7 +631,7 @@ int main(){
 
 
     // Empezamos el ciclo de apuestas
-    while (cantFichasJugador > 0 && cantFichasBot > 0) {
+    /*while (cantFichasJugador > 0 && cantFichasBot > 0) {
         printf("========================================\n");
         printf("Inicio de una nueva ronda de apuestas\n");
         printf("========================================\n");
@@ -425,7 +654,7 @@ int main(){
             // Resetear apuestas para la siguiente ronda
                 apuesta = 0;
         }
-    }
+    }*/
 
     printf("Fin del juego. Gracias por jugar.\n");
     

@@ -38,6 +38,9 @@ void list_clean(List *L);
 void list_sortedInsert(List *L, void *data,
                        int (*lower_than)(void *data1, void *data2));
 
+//Funcion para ordenar una lisdta segun una funcion comparacion
+void list_sort(List *L, int (*compare)(const void *, const void *));
+
 int list_size(List* L);
 
 #endif
