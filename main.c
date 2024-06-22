@@ -138,6 +138,37 @@ void MostrarBarajada(Stack* barajada){
 }
 
 
+
+// Función para guardar el valor en un archivo
+void guardarValor(const char *nombreArchivo, int valor) {
+		FILE *archivo = fopen(nombreArchivo, "w");
+
+		if (archivo == NULL) {
+				printf("No se pudo abrir el archivo para escribir.\n");
+				return;
+		}
+
+		fprintf(archivo, "%d\n", valor);
+		fclose(archivo);
+}
+
+// Función para cargar el valor desde un archivo
+int cargarValor(const char *nombreArchivo, int *valor) {
+		FILE *archivo = fopen(nombreArchivo, "r");
+
+		if (archivo == NULL) {
+				printf("No se pudo abrir el archivo para leer.\n");
+				return 1; // Indica que hubo un error
+		}
+
+		fscanf(archivo, "%d", valor);
+		fclose(archivo);
+
+		return 0; // Indica que la carga fue exitosa
+}
+
+
+
 /**
  *
  * Función main
@@ -148,11 +179,21 @@ int main()
 
 	TipoBaraja barajaPrincipal;
 	InicializarBaraja(&barajaPrincipal);
+
+	const char *nombreArchivo = "fichasGuardadas.txt";
+	int chipCount;
+	// Intentar cargar el puntaje desde el archivo
+	if (cargarValor(nombreArchivo, &chipCount) != 0) {
+			// Si no se pudo cargar el archivo, inicializar el puntaje a 0
+			puts("====== No se pudo recuperar el progreso ======");
+				chipCount = 10000;
+	}
 	
-	int chipCount = 10000;
+	
 	
 	char option; //Option del menu
 	do {
+		guardarValor(nombreArchivo, chipCount);
 		puts("========================================");
 		puts("   Bienvenido al Casino Virtual IDL");
 		puts("========================================");
@@ -166,7 +207,8 @@ int main()
 		puts("(4) Ruleta (Apuesta mínima $25)");
 		puts("(5) Jackpot (Apuesta mínima $25)");
 		puts("(6) Craps (Apuesta mínima $50)");
-
+		puts("-");
+		puts("(7) Reiniciar Progreso");
 		puts("(8) Guardar Progreso");
 		puts("(9) Cargar Progreso");
 		puts("(0) Salir del Casino");
@@ -202,11 +244,23 @@ int main()
 		case '6':
 			//Craps(chipCount);
 			break;
+
+		case '7':
+			chipCount = 10000;
+			guardarValor(nombreArchivo, chipCount);
+			printf("Progreso reiniciado con exito. Cantidad de fichas actuales: %d\n", chipCount);
+		break;
+			
 		case '8':
 			//SaveProgress(chipCount);
+			guardarValor(nombreArchivo, chipCount);
 			break;
 		case '9':
-			//LoadProgress(chipCount);
+			if (cargarValor(nombreArchivo, &chipCount) != 0) {
+					printf("Puntaje no pudo ser cargado");
+			} else {
+					printf("Puntaje cargado con exito");
+			}
 			break;
 		}
 		presioneTeclaParaContinuar();
@@ -214,5 +268,10 @@ int main()
 
 	} while (option != '0');
 
+	void guardarAlSalir(void) {
+			guardarValor(nombreArchivo, chipCount);
+	}
+	
+	atexit(guardarAlSalir);
 	return 0;
 }

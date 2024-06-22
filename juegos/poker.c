@@ -398,28 +398,28 @@ int main(){
 
 
     // Empezamos el ciclo de apuestas
-    while (fichasJugador > 0 && fichasBot > 0) {
+    while (cantFichasJugador > 0 && cantFichasBot > 0) {
         printf("========================================\n");
         printf("Inicio de una nueva ronda de apuestas\n");
         printf("========================================\n");
 
         // Turno del bot primero
-        DesicionesBot(&fichasBot, &apuestaActual);
+        AccionesBot(&cantFichasBot, &apuesta);
 
         // Si el bot no ha pasado, el jugador tiene que actuar
-        if (apuestaActual > 0) {
-            TurnoJugador(&fichasJugador, &apuestaActual);
+        if (apuesta > 0) {
+            TurnoJugador(&cantFichasJugador, &apuesta);
         }
 
         // Continuar con la siguiente ronda si ambos jugadores tienen fichas
-        if (fichasJugador > 0 && fichasBot > 0) {
+        if (cantFichasJugador > 0 && cantFichasBot > 0) {
             // Simular las siguientes rondas del juego (Flop, Turn, River)
             Flop(&baraja, pilaCartas);
             Turn(&baraja, pilaCartas);
             River(&baraja, pilaCartas);
 
             // Resetear apuestas para la siguiente ronda
-            apuestaActual = 0;
+                apuesta = 0;
         }
     }
 
