@@ -537,6 +537,11 @@ int EsEscalera(List* manoCompleta){
     return 1;
 }
 
+int EsEscaleraDeColor(List* manoCompleta){
+    if (EsColor(manoCompleta) && EsEscalera(manoCompleta)) return 1;
+    return 0;
+}
+
 /// Funcion para obtener las 7 cartas, 2 del jugador y 5 de la mesa 
 void ObtenerManoCompleta(List* manoCompleta, List* cartasJugador, TipoBaraja *baraja) {
     TipoCarta* carta = NULL;
@@ -587,10 +592,14 @@ int main(){
     ObtenerManoCompleta(manoJugadorCompleta, manoJugador, &baraja);
     MostrarCartas(manoPerso);
     printf("========================================\n");
-    if (EsColor(manoPerso)){
+    
+    if (EsEscaleraDeColor(manoPerso)){
+        printf("El jugador tiene una escalera de color!!\n");
+    }
+    else if (EsColor(manoPerso)){
         printf("El jugador tiene COLOR!!\n");
     }
-    if (EsEscalera(manoPerso)){
+    else if (EsEscalera(manoPerso)){
         printf( "El jugador tiene ESCALERA!!\n");
     }
     
