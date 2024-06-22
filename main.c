@@ -187,26 +187,44 @@ int main()
 			// Si no se pudo cargar el archivo, inicializar el puntaje a 0
 			puts("====== No se pudo recuperar el progreso ======");
 				cantFichasJugador = 10000;
+	} 
+	if (cantFichasJugador <= 0){
+			cantFichasJugador = 10000;
+		puts("====== Se ha reiniciado el contador de fichas ======");
 	}
 	
 	
 	
 	char option; //Option del menu
 	do {
+		if (cantFichasJugador <= 0){
+			puts("========================================");
+			puts("   Bienvenido al Casino Virtual IDL");
+			puts("========================================");
+			puts("========================================");
+			printf("\n   Cantidad Actual de Fichas: $%d\n\n", cantFichasJugador);
+			puts("========================================");
+			puts("========================================");
+			puts("No tienes fichas suficientes para seguir jugando.");
+			puts("========================================");
+			puts("= Game Over - Saliendo del simulador.. =");
+			puts("========================================");
+			return 0;
+		}
 		guardarValor(nombreArchivo, cantFichasJugador);
 		puts("========================================");
 		puts("   Bienvenido al Casino Virtual IDL");
 		puts("========================================");
 		puts("========================================");
-		printf("\n   Cantidad Actual de Fichas: %d\n\n", cantFichasJugador);
+		printf("\n   Cantidad Actual de Fichas: $%d\n\n", cantFichasJugador);
 		puts("========================================");
 		
-		puts("(1) Blackjack (Apuesta mínima $25)");
-		puts("(2) Poker (Apuesta mínima $25)");
-		puts("(3) Higher or Lower  (Apuesta mínima $100)");
-		puts("(4) Ruleta (Apuesta mínima $25)");
-		puts("(5) Jackpot (Apuesta mínima $25)");
-		puts("(6) Craps (Apuesta mínima $50)");
+		puts("(1) Blackjack (Costro de entrada $25)");
+		puts("(2) Poker (Costo de entrada $25)");
+		puts("(3) Higher or Lower  (Costo de entrada $100)");
+		puts("(4) Ruleta (Costo de entrada $25)");
+		puts("(5) Jackpot (Costo de entrada $25)");
+		puts("(6) Craps (Costo de entrada $50)");
 		puts("-");
 		puts("(7) Reiniciar Progreso");
 		puts("(8) Guardar Progreso");
@@ -223,25 +241,64 @@ int main()
 		Stack* pilaCartas;
 		switch (option) {
 		case '1':
+			if (cantFichasJugador < 0) {
+				puts("No tienes suficientes fichas para jugar");
+				break;
+			}
+			cantFichasJugador -= 25;
+			
 			MostrarCartas(&barajaPrincipal);
 			break;
 		case '2':
+			if (cantFichasJugador < 0) {
+				puts("No tienes suficientes fichas para jugar");
+				break;
+			}
+			cantFichasJugador -= 25;
+			
 			//MostrarCartas(&barajaPrincipal);
 			pilaCartas = MezclarBaraja((&barajaPrincipal)->listaCartas);
 			//printf("Cartas barajadas:\n");
 			MostrarBarajada(pilaCartas);
+			
+			
+			
 			//Poker(cantFichasJugador);
 			break;
 		case '3':
+			if (cantFichasJugador < 0) {
+				puts("No tienes suficientes fichas para jugar");
+				break;
+			}
+			cantFichasJugador -= 100;
+			
 			//HigherOrLower(cantFichasJugador);
 			break;
 		case '4':
+			if (cantFichasJugador < 0) {
+				puts("No tienes suficientes fichas para jugar");
+				break;
+			}
+			cantFichasJugador -= 25;
+			
 			//Ruleta(cantFichasJugador);
 			break;
 		case '5':
+			if (cantFichasJugador < 0) {
+				puts("No tienes suficientes fichas para jugar");
+				break;
+			} 
+			cantFichasJugador -= 25;
+			
 			JackpotGame(&cantFichasJugador);
 			break;
 		case '6':
+			if (cantFichasJugador < 0) {
+				puts("No tienes suficientes fichas para jugar");
+				break;
+			}
+			cantFichasJugador -= 50;
+			
 			//Craps(cantFichasJugador);
 			break;
 
@@ -266,7 +323,7 @@ int main()
 		presioneTeclaParaContinuar();
 		limpiarPantalla();
 
-	} while (option != '0');
+	} while (option != '0' && cantFichasJugador >= 0);
 
 	void guardarAlSalir(void) {
 			guardarValor(nombreArchivo, cantFichasJugador);

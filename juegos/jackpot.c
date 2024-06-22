@@ -11,6 +11,11 @@
 TipoCasilla* CrearCasilla() {
     
     TipoCasilla* casilla = (TipoCasilla*)malloc(sizeof(TipoCasilla));
+    if (casilla == NULL){
+        printf("Error al designar memoria para la casilla\n");
+        EXIT_FAILURE;
+    }
+    
     int figuraAleatoria = rand() % 4;
     switch (figuraAleatoria) {
         case 0:
@@ -39,6 +44,10 @@ TipoCasilla* CrearCasilla() {
 // 
 TipoRodillo* CrearRodillo() {
     TipoRodillo* rodillo = (TipoRodillo*)malloc(sizeof(TipoRodillo));
+    if (rodillo == NULL){
+        printf("Error al designar memoria para el rodillo\n");
+        EXIT_FAILURE;
+    }
     rodillo->listaCasillas = list_create();
 
     
@@ -78,9 +87,9 @@ int VerificarPremio(TipoRodillo* rodillo) {
  */
 // 
 int JackpotGame(int *cantFichasJugador) {
-
+    srand(time(NULL));
     TipoRodillo* rodillo = CrearRodillo();
-
+    
     char option; //Option del menu
     int apuesta = 0;
     do {
@@ -104,8 +113,8 @@ int JackpotGame(int *cantFichasJugador) {
             puts("¡Muy bien, vamos a jugar!");
             puts(" Ingrese su apuesta: ");
             scanf("%d", &apuesta);
-            if (apuesta <= 0 || apuesta >= *cantFichasJugador){
-                while (apuesta <= 0 || apuesta >= *cantFichasJugador){
+            if (apuesta <= 0 || apuesta > *cantFichasJugador){
+                while (apuesta <= 0 || apuesta > *cantFichasJugador){
                     puts(" Ingrese una apuesta válida: ");
                     scanf("%d", &apuesta);
                 }
@@ -134,6 +143,7 @@ int JackpotGame(int *cantFichasJugador) {
                 puts(" Volviendo al menu principal....");
                 puts("========================================");
             }
+            free(rodillo);
             return 0;
             
         case '2':

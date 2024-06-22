@@ -45,6 +45,10 @@ void InicializarBaraja(TipoBaraja *baraja) {
         //Para cada valor	del 1 al 13
         for (j = 1; j <= 13; j++) {
             TipoCarta *carta = (TipoCarta *)malloc(sizeof(TipoCarta));
+            if (carta == NULL){
+                printf("Error al designar memoria para la carta: %d\n", j);
+                EXIT_FAILURE;
+            }
             carta->palo = palos[i];
             carta->valor = j;
             carta->clave = k++;
