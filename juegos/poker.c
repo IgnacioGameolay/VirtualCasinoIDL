@@ -236,7 +236,7 @@ void MostrarCartas(List* listaCartas){
     TipoCarta* carta = list_first(listaCartas);
 
     while(carta != NULL){
-        if (carta->valor >= 2 && carta->valor <= 10) {
+        if ((carta->valor >= 2) && (carta->valor <= 10)) {
             printf("%d - %c \n", carta->valor, carta->palo);
         } else {
             switch (carta->valor) {
@@ -272,8 +272,6 @@ void MostrarBarajada(Stack* barajada){
 TipoCarta* SacarCarta(Stack* barajada){
     return (TipoCarta*) stack_pop(barajada);
 }
-
-
 
 
 
@@ -511,20 +509,29 @@ int CompararCartasMayorAMenor(const void *data1, const void *data2) {
 
 List* CrearManoCompletaPerso(){
     List* mano = list_create();
-    
-    for (int i = 0; i < 7; i++){
+
+    // Crear una escalera real del mismo palo, por ejemplo, Corazones ('C')
+    int valoresEscaleraReal[] = {1, 10, 11, 12, 13};  // 10, J, Q, K, A
+    char paloEscaleraReal = 'C';  // Corazones
+
+    // Agregar las 5 cartas de la escalera real a la mano
+    for (int i = 0; i < 5; i++) {
         TipoCarta *carta = (TipoCarta *)malloc(sizeof(TipoCarta));
-        if (i < 4){
-            carta->valor = 4;
-        } else {
-            carta->valor = 1 + i;
-        }
-        
+        carta->valor = valoresEscaleraReal[i];
+        carta->palo = paloEscaleraReal;
         carta->clave = 1 + rand() % 4;
-        carta->palo = 'C';
         list_pushBack(mano, carta);
     }
-    
+
+    // Agregar 2 cartas adicionales al azar
+    for (int i = 0; i < 2; i++) {
+        TipoCarta *carta = (TipoCarta *)malloc(sizeof(TipoCarta));
+        carta->valor = 2 + rand() % 9;  // Valores entre 2 y 10
+        carta->palo = 'C' + rand() % 4;  // Un palo al azar
+        carta->clave = 1 + rand() % 4;
+        list_pushBack(mano, carta);
+    }
+
     list_sort(mano, CompararCartas);
     return mano;
 }
@@ -556,7 +563,7 @@ int EsEscalera(List* manoCompleta){
 }
 
 int EsEscaleraDeColor(List* manoCompleta){
-    if (EsColor(manoCompleta) && EsEscalera(manoCompleta)) return 1;
+    if ((EsColor(manoCompleta)) && (EsEscalera(manoCompleta))) return 1;
     return 0;
 }
 
@@ -655,7 +662,8 @@ int EsFullHouse(List* manoCompleta){
     MapPair *current_pair = map_first(mapaFrecuenciaValores);
     while (current_pair != NULL) {
         int frecuencia = *((int *)current_pair->value);
-        if (cantParejas == 1 && cantTrios == 1){
+        
+        if ((cantParejas == 1) && (cantTrios == 1)){
             map_clean(mapaFrecuenciaValores);
             free(mapaFrecuenciaValores);
             return 1;
@@ -665,6 +673,15 @@ int EsFullHouse(List* manoCompleta){
         current_pair = map_next(mapaFrecuenciaValores);
     }
 
+    printf("Cantidad de apariciones de cada valor en la mano:\n");
+    current_pair = map_first(mapaFrecuenciaValores);
+    while (current_pair != NULL) {
+        int frecuencia = *((int *)current_pair->value);
+        int card = *((int *)current_pair->key);
+        printf("la carta %d se repite %d veces\n", card, frecuencia);
+        current_pair = map_next(mapaFrecuenciaValores);
+    }
+    printf("LA cant de trios y duplas es: %d y %d\n", cantTrios, cantParejas);
     map_clean(mapaFrecuenciaValores);
     free(mapaFrecuenciaValores);
 
@@ -702,6 +719,83 @@ int EsPoker(List* manoCompleta){
     }
     return 0;
 }
+
+int is_equal_str(void *key1, void *key2) {
+    return strcasecmp((char *)key1, (char *)key2) == 0;
+}
+
+
+int EsEscaleraReal(List* manoCompleta){
+    Map* mapaFrecuenciaValores = NULL;
+    mapaFrecuenciaValores = map_create(is_equal_int);
+
+    TipoCarta* carta = NULL;
+    for (carta = list_first(manoCompleta); carta != NULL; carta = list_next(manoCompleta)) {
+
+        MapPair* pair = map_search(mapaFrecuenciaValores, &carta->palo);
+
+        if (pair == NULL){           
+            //Crear lista de cartas con el mismo palo 
+            List* listaCartasPorPalo = list_create();
+            map_insert(mapaFrecuenciaValores, &carta->palo, listaCartasPorPalo);
+            list_pushFront(listaCartasPorPalo, carta);
+        } else {
+            list_pushFront(pair->value, carta);
+        }
+    }
+
+    //Recorrer cada lista de palos
+    MapPair* current_pair = map_first(mapaFrecuenciaValores);
+    
+    while (current_pair != NULL) {
+        //printf(" Cartas del palo: %s\n", (char*)current_pair->key);
+        // Verificar si hay una escalera real en este palo
+
+        int hayAs = 0, hayRey = 0, hayReina = 0, hayJota = 0, hayDiez = 0;
+
+        TipoCarta* carta = list_first(current_pair->value);
+
+        while(carta != NULL){
+
+            //Logica para determinar si es escalera real
+            if (carta->valor == 1) hayAs = 1;  // As
+            else if (carta->valor == 13) hayRey = 1;  // Rey
+            else if (carta->valor == 12) hayReina = 1;  // Reina
+            else if (carta->valor == 11) hayJota = 1;  // Jota
+            else if (carta->valor == 10) hayDiez = 1;  // Diez
+            
+            carta = list_next(current_pair->value);
+        }
+
+        //Comprobar si estan las Cartas Reales
+        if (hayAs && hayRey && hayReina && hayJota && hayDiez) {
+            map_clean(mapaFrecuenciaValores);
+            free(mapaFrecuenciaValores);
+            return 1;
+        }
+
+        current_pair = map_next(mapaFrecuenciaValores);
+    }
+    
+    return 0;
+}
+
+
+TipoCarta* ObtenerCartaMasAlta(List* mano) {
+    TipoCarta* cartaMasAlta = list_first(mano);
+    TipoCarta* cartaActual = cartaMasAlta;
+
+    while (cartaActual != NULL) {
+        if (cartaActual->valor == 1) return cartaMasAlta; //retornar el As como carta mas alta
+        if (cartaActual->valor > cartaMasAlta->valor) {
+            cartaMasAlta = cartaActual;
+        }
+        cartaActual = list_next(mano);
+    }
+
+    return cartaMasAlta;
+}
+
 /// Funcion para obtener las 7 cartas, 2 del jugador y 5 de la mesa 
 void ObtenerManoCompleta(List* manoCompleta, List* cartasJugador, TipoBaraja *baraja) {
     TipoCarta* carta = NULL;
@@ -753,37 +847,149 @@ int main(){
     MostrarCartas(manoJugadorCompleta);
     printf("========================================\n");
 
-    if (EsPoker(manoJugadorCompleta)){
+    /*if (EsFullHouse(manoJugadorCompleta)){
+        printf("El jugador tiene FULL HOUSE!!\n");
+        return 4;
+    }*/
+
+    if (EsEscaleraReal(manoJugadorCompleta)){
+        printf("El jugador tiene Escalera Real!!\n");
+        //return 1;
+    }
+    else if (EsEscaleraDeColor(manoJugadorCompleta)){
+        printf("El jugador tiene una escalera de color!!\n");
+        //return 2;
+    }
+    else if (EsPoker(manoJugadorCompleta)){
         printf("El jugador tiene POKER!!\n");
+        //return 3;
     }
     else if (EsFullHouse(manoJugadorCompleta)){
         printf("El jugador tiene FULL HOUSE!!\n");
+        //return 4;
+    } 
+    else if (EsColor(manoJugadorCompleta)){
+        printf("El jugador tiene COLOR!!\n");
+        //return 5;
+    }
+    else if (EsEscalera(manoJugadorCompleta)){
+        printf( "El jugador tiene ESCALERA!!\n");
+        //return 6;
     }
     else if (EsTrio(manoJugadorCompleta)){
         printf("El jugador tiene UN TRIOO!!\n");
+        //return 7;
     } else {
         int esPareja = EsPareja(manoJugadorCompleta);
         if (esPareja){
-            if (esPareja == 1){
-                printf("El jugador tiene PAREJA SIMPLE!!\n");
+            if (esPareja != 1){
+                printf("El jugador tiene PAREJA  DOBLE!!\n");
+                //return 8;
             } else {
-                printf("El jugador tiene PAREJA DOBLE!!\n");
+                printf("El jugador tiene PAREJA SIMPLE!!\n");
+                //return 9;
             }
-        }
-        else if (EsEscaleraDeColor(manoJugadorCompleta)){
-            printf("El jugador tiene una escalera de color!!\n");
-        }
-        else if (EsColor(manoJugadorCompleta)){
-            printf("El jugador tiene COLOR!!\n");
-        }
-        else if (EsEscalera(manoJugadorCompleta)){
-            printf( "El jugador tiene ESCALERA!!\n");
+        }   
+         else {
+            printf("El jugador tiene solo Carta Alta!\n");
+
+            TipoCarta* cartaMasAlta = ObtenerCartaMasAlta(manoJugadorCompleta);
+
+            if ((cartaMasAlta->valor >= 2) && (cartaMasAlta->valor <= 10)) {
+                printf("La carta es: %d\n - %c", cartaMasAlta->valor, cartaMasAlta->palo);
+            } else {
+                switch (cartaMasAlta->valor) {
+                        case 1:
+                            printf("La carta es: A - %c\n", cartaMasAlta->palo);
+                            break;
+                        case 11:
+                            printf("La carta es: J - %c\n", cartaMasAlta->palo);
+                            break;
+                        case 12:
+                            printf("La carta es: Q - %c\n", cartaMasAlta->palo);
+                            break;
+                        case 13:
+                            printf("La carta es: K - %c\n", cartaMasAlta->palo);
+                            break;
+                }
+            }
+            //return 10;
         }
     }
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
-
-
 
 
 
