@@ -550,16 +550,33 @@ int EsColor(List* manoCompleta){
 }
 
 int EsEscalera(List* manoCompleta){
-    TipoCarta* cartaActual = NULL;
+    // Ordenar la mano por valor de carta de forma ascendente
+    //list_sort(manoCompleta, CompararCartas);
 
-    TipoCarta* cartaPrimera = list_first(manoCompleta);
-    int valorPrimeraCarta = cartaPrimera->valor;
+    TipoCarta* cartaAnterior = NULL;
+    int contador = 0;
 
-    for (int i = 0; i < 5; i++){
-        cartaActual = list_next(manoCompleta);   
-        if (cartaActual->valor != cartaPrimera->valor + i +1) return 0;
+    // Recorrer la mano para verificar si hay una escalera
+    for (TipoCarta* cartaActual = list_first(manoCompleta); cartaActual != NULL; cartaActual = list_next(manoCompleta)) {
+        if (cartaAnterior != NULL) {
+            // Verificar si la carta actual tiene un valor consecutivo al anterior
+            if (cartaActual->valor == cartaAnterior->valor + 1) {
+                contador++;
+            } else if (cartaActual->valor != cartaAnterior->valor) {
+                // Si hay una brecha en los valores, reiniciar el contador
+                contador = 0;
+            }
+        }
+
+        cartaAnterior = cartaActual;
+
+        // Si se encontraron cinco cartas consecutivas, es una escalera
+        if (contador == 4) {
+            return 1;
+        }
     }
-    return 1;
+
+    return 0;
 }
 
 int EsEscaleraDeColor(List* manoCompleta){
