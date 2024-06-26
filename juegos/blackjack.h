@@ -5,7 +5,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-
+#include "../tdas/list.h"
+#include "../tdas/stack.h"
+#include "../tdas/extra.h"
+#include "../tdas/map.h"
 
 // Estructuras de datos
 typedef struct {
@@ -35,5 +38,11 @@ int CalcularPuntaje(List* mano);
 void MostrarReglasBlackjack();
 
 int Blackjack(int *chipCount);
+
+void jugarBL(int *chipCount);
+
+void determinarGanador(int puntajeJugador, int puntajeDealer, int apuesta, int* chipCount);
+
+void menuBL();
 
 #endif /* BLACKJACK_H */
