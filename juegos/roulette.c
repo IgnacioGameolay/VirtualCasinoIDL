@@ -36,86 +36,96 @@ void inicializarRuleta(TipoRuleta *ruleta);
   ruleta->casillaActual = -1;
 }
 
-void crearApuesta(TipoApuesta* apuesta, int monto)
+void crearApuesta(TipoApuesta* apuesta)
 {
-    printf("¿Qué tipo de apuesta desea hacer?\n");
-    printf("1. Número\n");
-    printf("2. Color\n");
-    printf("3. Paridad\n");
-    printf("4. Columna\n");
-    printf("5. Docena\n");
-    printf("6. Mitad\n");
+  printf("¿Qué tipo de apuesta desea hacer?\n");
+  printf("1. Número\n");
+  printf("2. Color\n");
+  printf("3. Paridad\n");
+  printf("4. Columna\n");
+  printf("5. Docena\n");
+  printf("6. Mitad\n");
 
-    int tipo;
-    scanf("%d", &tipo);
+  int tipo;
+  scanf("%d", &tipo);
 
-    printf("¿Qué monto desea apostar?\n");
-    scanf("%d", &monto);
-    apuesta->apuesta = monto;
+  int monto;
+  printf("¿Qué monto desea apostar?\n");
+  scanf("%d", &monto);
+  apuesta->monto = monto;
 
-    switch (tipo) {
-        case 1: // Apuesta a número
-            apuesta->tipo = "Número";
-            printf("Ingrese el número al que desea apostar (0-36):\n");
-            scanf("%d", &apuesta->numero);
-            break;
-        case 2: // Apuesta a color
-            apuesta->tipo = "Color";
-            printf("Ingrese el color al que desea apostar (Rojo, Negro, Verde):\n");
-            char color[10];
-            scanf("%s", color);
-            if (strcmp(color, "Rojo") == 0 || strcmp(color, "Negro") == 0 || strcmp(color, "Verde") == 0) {
-                apuesta->color = strdup(color);
-            } else {
-                printf("Color inválido. Apuesta cancelada.\n");
-                return;
-            }
-            break;
-        case 3: // Apuesta a paridad
-            apuesta->tipo = "Paridad";
-            printf("Ingrese la paridad a la que desea apostar (Par, Impar):\n");
-            char paridad[10];
-            scanf("%s", paridad);
-            if (strcmp(paridad, "Par") == 0 || strcmp(paridad, "Impar") == 0) {
-                apuesta->paridad = strdup(paridad);
-            } else {
-                printf("Paridad inválida. Apuesta cancelada.\n");
-                return;
-            }
-            break;
-        case 4: // Apuesta a columna
-            apuesta->tipo = "Columna";
-            printf("Ingrese la columna a la que desea apostar (1-3):\n");
-            scanf("%d", &apuesta->columna);
-            if (apuesta->columna < 1 || apuesta->columna > 3) {
-                printf("Columna inválida. Apuesta cancelada.\n");
-                return;
-            }
-            break;
-        case 5: // Apuesta a docena
-            apuesta->tipo = "Docena";
-            printf("Ingrese la docena a la que desea apostar (1-3):\n");
-            scanf("%d", &apuesta->docena);
-            if (apuesta->docena < 1 || apuesta->docena > 3) {
-                printf("Docena inválida. Apuesta cancelada.\n");
-                return;
-            }
-            break;
-        case 6: // Apuesta a mitad
-            apuesta->tipo = "Mitad";
-            printf("Ingrese la mitad a la que desea apostar (1-2):\n");
-            scanf("%d", &apuesta->mitad);
-            if (apuesta->mitad < 1 || apuesta->mitad > 2) {
-                printf("Mitad inválida. Apuesta cancelada.\n");
-                return;
-            }
-            break;
-        default:
-            printf("Tipo de apuesta inválido. Apuesta cancelada.\n");
-            return;
-    }
-
-    printf("Apuesta creada exitosamente.\n");
+  switch (tipo) 
+  {
+    case 1: // Apuesta a número
+      apuesta->tipo = "Número";
+      printf("Ingrese el número al que desea apostar (0-36):\n");
+      scanf("%d", &apuesta->numero);
+      break;
+    case 2: // Apuesta a color
+      apuesta->tipo = "Color";
+      printf("Ingrese el color al que desea apostar (Rojo, Negro, Verde):\n");
+      char color[10];
+      scanf("%s", color);
+      if (strcmp(color, "Rojo") == 0 || strcmp(color, "Negro") == 0 || strcmp(color, "Verde") == 0)
+      {
+        apuesta->color = strdup(color);
+      } 
+      else
+      {
+        printf("Color inválido. Apuesta cancelada.\n");
+        return;
+      }
+      break;
+    case 3: // Apuesta a paridad
+      apuesta->tipo = "Paridad";
+      printf("Ingrese la paridad a la que desea apostar (Par, Impar):\n");
+      char paridad[10];
+      scanf("%s", paridad);
+      if (strcmp(paridad, "Par") == 0 || strcmp(paridad, "Impar") == 0)
+      {
+        apuesta->paridad = strdup(paridad);
+      } 
+      else 
+      {
+        printf("Paridad inválida. Apuesta cancelada.\n");
+        return;
+      }
+      break;
+    case 4: // Apuesta a columna
+      apuesta->tipo = "Columna";
+      printf("Ingrese la columna a la que desea apostar (1 - 2 - 3):\n");
+      scanf("%d", &apuesta->columna);
+      if (apuesta->columna < 1 || apuesta->columna > 3) 
+      {
+        printf("Columna inválida. Apuesta cancelada.\n");
+        return;
+      }
+      break;
+    case 5: // Apuesta a docena
+      apuesta->tipo = "Docena";
+      printf("Ingrese la docena a la que desea apostar (1 - 2 - 3):\n");
+      scanf("%d", &apuesta->docena);
+      if (apuesta->docena < 1 || apuesta->docena > 3) 
+      {
+        printf("Docena inválida. Apuesta cancelada.\n");
+        return;
+      }
+      break;
+    case 6: // Apuesta a mitad
+      apuesta->tipo = "Mitad";
+      printf("Ingrese la mitad a la que desea apostar (1 - 2):\n");
+      scanf("%d", &apuesta->mitad);
+      if (apuesta->mitad < 1 || apuesta->mitad > 2) 
+      {
+        printf("Mitad inválida. Apuesta cancelada.\n");
+        return;
+      }
+      break;
+    default:
+      printf("Tipo de apuesta inválido. Apuesta cancelada.\n");
+      return;
+  }
+  printf("Apuesta creada exitosamente.\n");
 }
 
 void girarRuleta(TipoRuleta *ruleta)
@@ -179,7 +189,7 @@ int evaluarApuesta(TipoApuesta *apuesta, TipoRuleta *ruleta)
         }
         break;
       case "Color":
-        if (esRojo(resultado) && strcmp(apuesta->color, "Rojo") == 0 || esNegro(resultado) && strcmp(apuesta->color, "Negro") || resultado == 0 && strcmp(apuesta->color, "Verde") == 0))
+        if (esRojo(resultado) && strcmp(apuesta->color, "Rojo") == 0 || esNegro(resultado) && strcmp(apuesta->color, "Negro") || resultado == 0 || resultado == 0 && strcmp(apuesta->color, "Verde") == 0))
         {
           printf("¡Felicidades! Has ganado!\n");
         }
@@ -234,34 +244,36 @@ int evaluarApuesta(TipoApuesta *apuesta, TipoRuleta *ruleta)
     }
 }
 
-int Ruleta(int *chipCount) {
+int Ruleta(int *chipCount)
+{
+  TipoRodillo* rodillo = CrearRodillo();
 
-    TipoRodillo* rodillo = CrearRodillo();
+  char option; //Option del menu
+  int apuesta = 0;
+  do
+  {
+    puts("========================================");
+    puts(" Bienvenido a la Ruleta.");
+    puts("========================================");
+    printf("\n   Cantidad Actual de Fichas: %d\n\n", *chipCount);
+    puts("========================================");
+    puts("(1) Jugar");
+    puts("(2) Reglas");
+    puts("(3) Volver al menú principal");
+    puts("========================================");
+    printf("Ingrese su opción: \n");
+    puts("========================================");
+    scanf(" %c", &option);
 
-    char option; //Option del menu
-    int apuesta = 0;
-    do {
+    //Opciones del menu
+    switch (option)
+    {
+      case '1':
         puts("========================================");
-        puts(" Bienvenido a Jackpot.");
+        puts("¡Muy bien, vamos a jugar!");
+        puts(" Ingrese su apuesta: ");
+        scanf("%d", &apuesta);
         puts("========================================");
-        printf("\n   Cantidad Actual de Fichas: %d\n\n", *chipCount);
-        puts("========================================");
-        puts("(1) Jugar");
-        puts("(2) Reglas");
-        puts("(3) Volver al menú principal");
-        puts("========================================");
-        printf("Ingrese su opción: \n");
-        puts("========================================");
-        scanf(" %c", &option);
-
-        //Opciones del menu
-        switch (option) {
-        case '1':
-            puts("========================================");
-            puts("¡Muy bien, vamos a jugar!");
-            puts(" Ingrese su apuesta: ");
-            scanf("%d", &apuesta);
-            puts("========================================");
 
             printf("Resultados:\n");
             TipoCasilla* casilla = (TipoCasilla*)list_first(rodillo->listaCasillas);

@@ -8,14 +8,6 @@
 #include "../tdas/extra.h"
 
 typedef struct {
-    int numeroRonda; // Número de la ronda (preflop, flop, turn, river)
-    int apuestaActual; // Apuesta actual en la ronda
-    int jugadorActual; // Índice del jugador que debe actuar
-    int accionActual; // Acción actual (apostar, igualar, subir, pasar, retirarse)
-} TipoRondaApuestas;
-
-
-typedef struct {
         int valor;  // 1 para As, 11 para J, 12 para Q, 13 para K, y 2-10 para las cartas numéricas
         int clave;
         char palo;
@@ -26,20 +18,6 @@ typedef struct {
         List *cartasComunitarias; // Cartas comunitarias (flop, turn, river)
         TipoRondaApuestas ronda; // Información de la ronda actual de apuestas
 } TipoBaraja;
-
-// Define los valores de las manos
-enum {
-    CARTA_ALTA,
-    PAREJA,
-    DOBLE_PAREJA,
-    TRIO,
-    ESCALERA,
-    COLOR,
-    FULL_HOUSE,
-    POKER,
-    ESCALERA_COLOR,
-    ESCALERA_REAL
-};
 
 
 // Función para comparar dos cartas por valor (para ordenarlas)
@@ -55,111 +33,34 @@ int CompararCartas(const void *data1, const void *data2) {
         return 0;
     }
 }
-/*
-// Prototipos de las funciones auxiliares
-int EsEscaleraReal(List *mano) {
-    // Verificar si la mano tiene al menos 5 cartas
-    if (list_size(mano) < 5) {
+
+// Función para comparar dos cartas por valor (para ordenarlas)
+int CompararCartasMayorAMenor(const void *data1, const void *data2) {
+    TipoCarta *carta1 = (TipoCarta *)data1;
+    TipoCarta *carta2 = (TipoCarta *)data2;
+
+    if (carta1->valor > carta2->valor) {
+        return -1;
+    } else if (carta1->valor < carta2->valor) {
+        return 1;
+    } else {
         return 0;
     }
-
-    // Ordenar la mano por valor de carta de forma ascendente
-    list_sort(mano, &CompareCartas);
-
-    // Verificar si las cinco cartas más altas son una escalera real
-    TipoCarta *carta = list_first(mano);
-    int valorEsperado = 10;
-    char palo = carta->palo;
-    for (int i = 0; i < 5; i++) {
-        if (carta->valor != valorEsperado || carta->palo != palo) {
-            return 0;
-        }
-        carta = list_next(mano);
-        valorEsperado++;
-    }
-
-    return 1;
 }
 
-/*int EsEscaleraColor(List* mano);
-int EsPoker(List* mano);
-int EsFullHouse(List* mano);
-int EsColor(List* mano);
-int EsEscalera(List* mano);
-int EsTrio(List* mano);
-int EsDoblePareja(List* mano);
-int EsPareja(List* mano);
-
-
-
-
-
-
-int EvaluarMano(List* mano) {
-    if (EsEscaleraReal(mano)) return ESCALERA_REAL;
-    /*if (EsEscaleraColor(mano)) return ESCALERA_COLOR;
-    if (EsPoker(mano)) return POKER;
-    if (EsFullHouse(mano)) return FULL_HOUSE;
-    if (EsColor(mano)) return COLOR;
-    if (EsEscalera(mano)) return ESCALERA;
-    if (EsTrio(mano)) return TRIO;
-    if (EsDoblePareja(mano)) return DOBLE_PAREJA;
-    if (EsPareja(mano)) return PAREJA;
-
-    return CARTA_ALTA; // Si ninguna otra combinación se cumple, es carta alta
+// Funcion comparación para el mapa
+int IsLowerInt(void *key1, void *key2) {
+    return *(int *)key1 <= *(int *)key2; 
 }
 
-
-int CompararManos(List* mano1, List* mano2) {
-    int puntuacion1 = EvaluarMano(mano1);
-    int puntuacion2 = EvaluarMano(mano2);
-
-    if (puntuacion1 > puntuacion2) return 1;
-    if (puntuacion1 < puntuacion2) return 2;
-
-    // Si las puntuaciones son iguales, se debe comparar carta por carta
-    // Aquí se muestra un esqueleto de cómo podría hacerse
-
-    // Función para desempatar dos manos del mismo tipo
-    int Desempatar(List* mano1, List* mano2) {
-        // Aquí se debe implementar la lógica para desempatar manos del mismo tipo
-        return 0; // Retornar 0 si es empate, 1 si gana mano1, 2 si gana mano2
-    }
-
-    return Desempatar(mano1, mano2);
+int is_equal_int(void *key1, void *key2) {
+    return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
 }
 
-void ObtenerManoCompleta(List* manoCompleta, List* cartasJugador, List* cartasComunitarias) {
-    TipoCarta* carta;
-    for (carta = list_first(cartasJugador); carta != NULL; carta = list_next(cartasJugador)) {
-        list_pushBack(manoCompleta, carta);
-    }
-    for (carta = list_first(cartasComunitarias); carta != NULL; carta = list_next(cartasComunitarias)) {
-        list_pushBack(manoCompleta, carta);
-    }
+int is_equal_str(void *key1, void *key2) {
+    return strcasecmp((char *)key1, (char *)key2) == 0;
 }
 
-void VerificarGanador(List* cartasJugador, List* cartasBot, List* cartasComunitarias) {
-    List* manoJugador = list_create();
-    List* manoBot = list_create();
-
-    ObtenerManoCompleta(manoJugador, cartasJugador, cartasComunitarias);
-    ObtenerManoCompleta(manoBot, cartasBot, cartasComunitarias);
-
-    int resultado = CompararManos(manoJugador, manoBot);
-
-    if (resultado == 1) {
-        printf("El jugador gana.\n");
-    } else if (resultado == 2) {
-        printf("El bot gana.\n");
-    } else {
-        printf("Es un empate.\n");
-    }
-
-    list_clean(manoJugador);
-    list_clean(manoBot);
-}
-*/
 
 //Funcion para inicializar una baraja principal con las 52 cartas existentes (baraja inglesa).
 void InicializarBaraja(TipoBaraja *baraja) { 
@@ -191,10 +92,6 @@ void InicializarBaraja(TipoBaraja *baraja) {
     }
 }
 
-// Funcion comparación para el mapa
-int IsLowerInt(void *key1, void *key2) {
-    return *(int *)key1 <= *(int *)key2; 
-}
 
 Stack* MezclarBaraja(List* listaCartas) {
     // Crear mapa y stack
@@ -272,8 +169,6 @@ void MostrarBarajada(Stack* barajada){
 TipoCarta* SacarCarta(Stack* barajada){
     return (TipoCarta*) stack_pop(barajada);
 }
-
-
 
 
 void Apostar(int *apuestaActual, int *fichasJugador) {
@@ -493,19 +388,7 @@ void River(TipoBaraja *baraja, Stack* pilaCartas){
     MostrarCartas(baraja->cartasComunitarias);
 
 }
-// Función para comparar dos cartas por valor (para ordenarlas)
-int CompararCartasMayorAMenor(const void *data1, const void *data2) {
-    TipoCarta *carta1 = (TipoCarta *)data1;
-    TipoCarta *carta2 = (TipoCarta *)data2;
 
-    if (carta1->valor > carta2->valor) {
-        return -1;
-    } else if (carta1->valor < carta2->valor) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
 
 List* CrearManoCompletaPerso(){
     List* mano = list_create();
@@ -584,9 +467,6 @@ int EsEscaleraDeColor(List* manoCompleta){
     return 0;
 }
 
-int is_equal_int(void *key1, void *key2) {
-    return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
-}
 int EsPareja(List* manoCompleta){
     Map* mapaFrecuenciaValores = NULL;
     mapaFrecuenciaValores = map_create(is_equal_int);
@@ -736,11 +616,6 @@ int EsPoker(List* manoCompleta){
     }
     return 0;
 }
-
-int is_equal_str(void *key1, void *key2) {
-    return strcasecmp((char *)key1, (char *)key2) == 0;
-}
-
 
 int EsEscaleraReal(List* manoCompleta){
     Map* mapaFrecuenciaValores = NULL;
@@ -933,90 +808,9 @@ int main(){
             //return 10;
         }
     }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     
-
-
-
-
-
-
-
-
-
-
 
 
     

@@ -14,7 +14,7 @@ TipoCasilla* CrearCasilla() {
     if (casilla == NULL){
         printf("Error al designar memoria para la casilla\n");
         EXIT_FAILURE;
-    }
+    } 
     
     int figuraAleatoria = rand() % 4;
     switch (figuraAleatoria) {
@@ -147,7 +147,19 @@ int JackpotGame(int *cantFichasJugador) {
             return 0;
             
         case '2':
-            puts("Las reglas son...");
+            puts("========================================");
+            puts("Objetivo: Obtener una combinación de símbolos idénticos en todas las casillas del rodillo.\n");
+
+            puts("Inicio del Juego: El jugador podrá ingresar la cantidad de fichas que desea apostar.\n");
+
+            puts("Rodillo: El rodillo está compuesto por 3 casillas, cada una mostrando un símbolo geométrico (cuadrado, triángulo, círculo, y pentágono).\n");
+
+            puts("Opciones del Jugador: Después de realizar la apuesta, el jugador podrá hacer girar el rodillo para ver la combinación de símbolos resultante.\n");
+
+            puts("Condiciones de Victoria: El jugador gana si todos los símbolos de la combinación son iguales. Caso contrario pierde.\n");
+
+            puts("Resultado: Después de evaluar la combinación de símbolos, se informará al jugador si ha ganado o perdido, junto con la cantidad de fichas ganadas o perdidas.\n");
+            puts("========================================\n");
             break;
         case '3':
             //HigherOrLower(cantFichasJugador);

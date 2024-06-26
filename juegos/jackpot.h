@@ -8,7 +8,7 @@
 #include <time.h>
 #include "../tdas/list.h"
 #include "../tdas/extra.h"
-
+#include "../tdas/stack.h"
 // Estructura para una casilla del rodillo
 typedef struct {
     char figura[10];
