@@ -168,14 +168,18 @@ void determinarGanador(int puntajeJugador, int puntajeDealer, int apuesta, int* 
 void jugarBL(int *chipCount){
   int apuesta;
   char respuesta;
+  printf("================================\n");
+  printf("Creditos disponibles : %d\n", *chipCount);
+  printf("================================\n");
   
-  while(apuesta < 25){
+  while(1){
     printf("Ingrese la apuesta (mínimo $25): ");
     scanf("%d", &apuesta);
     if (apuesta < 25){
       printf("La apuesta mínima es de $25.\n");
     }
-    if (apuesta > *chipCount){
+    else if(apuesta >= 25) break;
+    else if (apuesta > *chipCount){
       printf("No tienes suficientes fichas para realizar esta apuesta.\n");
       printf("Deseas volver al menu principal? (s/n): ");
       scanf(" %c", &respuesta);
