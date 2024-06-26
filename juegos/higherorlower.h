@@ -11,8 +11,10 @@
 #include "../tdas/map.h"
 #include "cartas.h"
 
-
-
+void HigherOrLower(int *chipCount);
+void juegoHL(int *chipCount);
+void reglasHL();
+void MenuHL();
 
 
 #endif
