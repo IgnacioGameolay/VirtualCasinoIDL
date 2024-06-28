@@ -6,6 +6,7 @@
 #include "../tdas/stack.h"
 #include "../tdas/map.h"
 #include "../tdas/extra.h"
+
 #include "rondaBonus.h"
 #define MAX_CARAS 6
 
@@ -13,7 +14,7 @@ typedef struct
 {
     int dado1[MAX_CARAS];
     int dado2[MAX_CARAS];
-}TipoDado
+}TipoDado;
 
 typedef struct
 {
@@ -25,7 +26,7 @@ typedef struct
 {
     int punto; 
     int estado; 
-}TipoJuego
+}TipoJuego;
 
 void inicializarRonda(TipoDado *dados, TipoJuego *juego)
 {
@@ -41,7 +42,8 @@ void crearApuesta(TipoApuesta *apuesta, TipoJuego *juego)
 {
   printf("¿Qué tipo de apuesta desea hacer?\n");
 
-  int monto, tipo;
+  int monto; 
+  int tipo;
   
   switch (juego->estado)
   {
@@ -50,7 +52,7 @@ void crearApuesta(TipoApuesta *apuesta, TipoJuego *juego)
       printf("2. Barra de no pase\n");
       printf("3. Realizar Tiro y proceder con apuestas de Punto\n");
       printf("Ingrese su opción: ");
-      scanf("%d", tipo);
+      scanf("%d", &tipo);
       if(tipo < 1 || tipo > 3)
       {
         printf("Opción inválida. Intente de nuevo.\n");
@@ -67,7 +69,7 @@ void crearApuesta(TipoApuesta *apuesta, TipoJuego *juego)
       printf("1. A favor del número a venir\n");
       printf("2. Contra el número a venir\n");
       printf("Ingrese su opción: ");
-      scanf("%d", tipo);
+      scanf("%d", &tipo);
       if(tipo < 1 || tipo > 2)
       {
         printf("Opción inválida. Intente de nuevo.\n");
@@ -80,7 +82,7 @@ void crearApuesta(TipoApuesta *apuesta, TipoJuego *juego)
       return;
   }
   printf("Ingrese el monto de su apuesta: ");
-  scanf("%d", monto);
+  scanf("%d", &monto);
   if(monto < 1)
   {
     printf("Monto inválido. Intente de nuevo.\n");
@@ -89,11 +91,11 @@ void crearApuesta(TipoApuesta *apuesta, TipoJuego *juego)
   apuesta->monto = monto;
 }
 
-void lanzarDados(TipoDado *dados)
+int lanzarDados(TipoDado *dados)
 {
   srand(time(NULL));
-  int indice1 = dados->dado1 = rand() % MAX_CARAS;
-  int indice2 = dados->dado2 = rand() % MAX_CARAS;
+  int indice = rand() % MAX_CARAS;
+  return indice;
 }
 
 int evaluarApuestaFavor(TipoApuesta *apuesta, TipoJuego *juego, TipoDado *dados)
@@ -101,9 +103,9 @@ int evaluarApuestaFavor(TipoApuesta *apuesta, TipoJuego *juego, TipoDado *dados)
   int resultado;
   do
   {
-    dados->dado1[0] = lanzarDado();
-    dados->dado2[0] = lanzarDado();
-    resultado = dados->dado1[0] + dados->dado2[0];
+    int indice1 = lanzarDados(dados);
+    int indice2 = lanzarDados(dados);
+    resultado = dados->dado1[indice1] + dados->dado2[indice2];
     printf("Lanzamiento: %d + %d = %d\n", dados->dado1[0], dados->dado2[0], resultado);
 
     if (resultado == 7 || resultado == 11)
@@ -140,9 +142,9 @@ int evaluarApuestaContra(TipoApuesta *apuesta, TipoJuego *juego, TipoDado *dados
   int resultado;
   do
   {
-    dados->dado1[0] = lanzarDado();
-    dados->dado2[0] = lanzarDado();
-    resultado = dados->dado1[0] + dados->dado2[0];
+    int indice1 = lanzarDados(dados);
+    int indice2 = lanzarDados(dados);
+    resultado = dados->dado1[indice1] + dados->dado2[indice2];
     printf("Lanzamiento: %d + %d = %d\n", dados->dado1[0], dados->dado2[0], resultado);
 
     if (resultado == 2 || resultado == 3)
@@ -182,6 +184,8 @@ int evaluarApuestaContra(TipoApuesta *apuesta, TipoJuego *juego, TipoDado *dados
 
 int evaluarApuesta(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego)
 {
+  int indice1 = lanzarDados(dados);
+  int indice2 = lanzarDados(dados);
   int suma = dados->dado1[indice1] + dados->dado2[indice2];
   printf("Lanzamiento: %d + %d = %d\n", dados->dado1[indice1], dados->dado2[indice2], suma);
   if(suma != 2 && suma != 3 && suma != 7 && suma != 11 && suma != 12)
@@ -249,30 +253,17 @@ int evaluarApuesta(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego)
       }
       break;
       case 3: // A favor del número a venir
-        evualuarApuestaFavor(apuesta, juego, dados);
+        evaluarApuestaFavor(apuesta, juego, dados);
       case 4: // En contra del número a venir
-          if (juego->estado == 1) { // Tiro de salida
-              printf("Las apuestas en contra del número a venir no están permitidas en el tiro de salida.\n");
-          } else { // Tiro de punto
-              if (resultado == 2 || resultado == 3) {
-                  printf("Ganaste la apuesta en contra del número a venir!\n");
-              } else if (resultado == 7 || resultado == 11) {
-                  printf("Perdiste la apuesta en contra del número a venir.\n");
-              } else if (resultado == 12) {
-                  printf("Empate en la apuesta en contra del número a venir.\n");
-              } else {
-                  juego->punto = resultado;
-                  printf("Se ha establecido el punto en %d.\n", juego->punto);
-              }
-          }
-          break;
+        evaluarApuestaContra(apuesta, juego, dados);
+        break;
       default:
           printf("Tipo de apuesta inválido.\n");
           break;
   }
 }
 
-int CrapsGame(int *chipCount)
+int main(int *chipCount)
 {
   char option; //Option del menu
   TipoApuesta apuesta; //Apuesta a realizar
@@ -301,11 +292,11 @@ int CrapsGame(int *chipCount)
         inicializarRonda(&dados, &juego);
         crearApuesta(&apuesta, &juego);
         lanzarDados(&dados);
-        if(apuesta->tipo = 0)
+        if(apuesta.tipo == 0)
         {
           crearApuesta(&apuesta, &juego);
         }
-        resultado = EvaluarApuesta(&apuesta, &ruleta);
+        resultado = evaluarApuesta(&apuesta, &dados, &juego);
         if (resultado == 1){
 
           apuesta.monto += RondaBonus(&(apuesta.monto));

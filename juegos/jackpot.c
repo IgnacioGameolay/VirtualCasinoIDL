@@ -17,13 +17,13 @@ TipoCasilla* CrearCasilla() {
             strcpy(casilla->figura, "cuadrado");
             break;
         case 1:
-            strcpy(casilla->figura, "triangulo");
+            strcpy(casilla->figura, "triángulo");
             break;
         case 2:
-            strcpy(casilla->figura, "circulo");
+            strcpy(casilla->figura, "círculo");
             break;
         case 3:
-            strcpy(casilla->figura, "pentagono");
+            strcpy(casilla->figura, "pentágono");
             break;
     }
     return casilla;
@@ -75,7 +75,7 @@ int JackpotGame(int *cantFichasJugador) {
     int apuesta = 0;
     do {
         puts("========================================");
-        puts(" Bienvenido a $Jackpot.");
+        puts(" Bienvenido a Jackpot.");
         puts("========================================");
         printf("\n   Cantidad Actual de Fichas: %d\n\n", *cantFichasJugador);
         puts("========================================");
