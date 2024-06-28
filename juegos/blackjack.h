@@ -11,25 +11,18 @@
 #include "../tdas/map.h"
 
 // Estructuras de datos
-typedef struct {
-    char palo;
-    int valor;
-    int clave;
-} TipoCarta;
+typedef struct TipoCarta TipoCarta;
 
-typedef struct {
-    List* listaCartas;
-    int cartaActual;
-} TipoBaraja;
+typedef struct TipoBaraja TipoBaraja;
 
 // Prototipos de funciones
-int IsLowerInt(void *key1, void *key2);
+static int IsLowerInt(void *key1, void *key2);
 
-void InicializarBaraja(TipoBaraja *baraja);
+void InicializarBarajaBL(TipoBaraja *baraja);
 
-Stack* MezclarBaraja(List* listaCartas);
+Stack* MezclarBarajaBL(List* listaCartas);
 
-TipoCarta* SacarCarta(Stack* barajada);
+TipoCarta* SacarCartaBL(Stack* barajada);
 
 void MostrarMano(List* mano);
 
@@ -37,7 +30,7 @@ int CalcularPuntaje(List* mano);
 
 void MostrarReglasBlackjack();
 
-int Blackjack(int *chipCount);
+int BlackjackGame(int *chipCount);
 
 void jugarBL(int *chipCount);
 

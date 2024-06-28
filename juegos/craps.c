@@ -16,14 +16,14 @@ typedef struct
 
 typedef struct
 {
-    int monto; // Monto de la apuesta del jugador
-    int tipo; // Tipo de apuesta (1: Línea de pase, 2: Barra de no pase, 3: A favor del número a venir, 4: Contra el número a venir)
+    int monto; 
+    int tipo; 
 }TipoApuesta;
 
 typedef struct
 {
-    int punto; // Valor del punto actual
-    int estado; // Estado del juego (1: Tiro de Salida, 2: Tiro de punto)
+    int punto; 
+    int estado; 
 }TipoJuego
 
 void inicializarRonda(TipoDado *dados, TipoJuego *juego)

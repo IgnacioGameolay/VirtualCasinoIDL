@@ -6,11 +6,11 @@
 #include "tdas/extra.h"
 
 #include "juegos/jackpot.h"
-//#include "juegos/blackjack.h"
+#include "juegos/blackjack.h"
 //#include "juegos/cartas.h"
 //#include "juegos/craps.h"
-//#include "juegos/higherorlower.h"
-//#include "juegos/poker.h"
+#include "juegos/higherorlower.h"
+#include "juegos/poker.h"
 //#include "juegos/roulette.h"
 
 
@@ -112,22 +112,23 @@ int main()
 		switch (option) {
 		case '1':
 			// Blackjack
-			Blackjack(&cantFichasJugador);
+			BlackjackGame(&cantFichasJugador);
 			break;
 		case '2':
-			if (cantFichasJugador < 0) {
+			if (cantFichasJugador < 25) {
 				puts("No tienes suficientes fichas para jugar");
 				break;
 			}
+			PokerGame(&cantFichasJugador);
 			
 			break;
 		case '3':
-			if (cantFichasJugador < 0) {
+			if (cantFichasJugador < 101) {
 				puts("No tienes suficientes fichas para jugar");
 				break;
 			}
 			
-			//HigherOrLower(cantFichasJugador);
+			HigherOrLower(&cantFichasJugador);
 			break;
 		case '4':
 			if (cantFichasJugador < 0) {

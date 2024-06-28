@@ -7,17 +7,18 @@
 #include "../tdas/map.h"
 #include "../tdas/extra.h"
 #define NUM_CASILLAS 37
+#define MIN_CHIPS 50
 
 typedef struct
 {
-  int monto; //Cantidad apostada por el jugador
-  int numero; //Número de la casilla a la que apuesta el jugador (0 a 36)
-  const char* color; //Color de la casilla a la que apuesta el jugador (Rojo - Negro - Verde)
-  const char* paridad; //Paridad de la casilla a la que apuesta el jugador (Par - Impar)
-  int columna; //Columna de la casilla a la que apuesta el jugador (1 - 2 - 3, con la columna 1 correspondiendo a los números del 1 al 34 en incrementos de 3, la columna 2 a los números del 2 al 35 en incrementos de 3 y la columna 3 a los números del 3 al 36 en incrementos de 3)
-  int docena; //Docena de la casilla a la que apuesta el jugador (1 - 2 - 3, docena 1, números del 1 al 12, docena 2, números del 13 al 24 y docena 3, números del 25 al 36)
-  int mitad; //Mitad a la que apuesta el jugador (1 - 2, mitad 1, números del 1 al 18 y mitad 2, números del 19 al 36)
-  const char* tipo; //Tipo de apuesta hecha por el jugador
+  int monto;
+  int numero; 
+  const char* color; 
+  const char* paridad; 
+  int columna; 
+  int docena; 
+  int mitad; 
+  int tipo; 
 }TipoApuesta;
 
 typedef struct
@@ -27,7 +28,7 @@ typedef struct
 }TipoRuleta;
 
 void inicializarRuleta(TipoRuleta *ruleta);
-{
+{  
   int i;
   for(i = 0; i < NUM_CASILLAS; i++)
   {
@@ -36,7 +37,7 @@ void inicializarRuleta(TipoRuleta *ruleta);
   ruleta->casillaActual = -1;
 }
 
-void crearApuesta(TipoApuesta* apuesta)
+void crearApuesta(TipoApuesta* apuesta, int *chips)
 {
   printf("¿Qué tipo de apuesta desea hacer?\n");
   printf("1. Número\n");
@@ -52,17 +53,22 @@ void crearApuesta(TipoApuesta* apuesta)
   int monto;
   printf("¿Qué monto desea apostar?\n");
   scanf("%d", &monto);
+  if(monto > *chips || monto < MIN_CHIPS)
+  {
+    printf("No tienes suficientes fichas para apostar o has apostado una cantidad menor que el valor mínimo. Prueba con otro juego.\n");
+    return;
+  }
   apuesta->monto = monto;
 
   switch (tipo) 
   {
     case 1: // Apuesta a número
-      apuesta->tipo = "Número";
+      apuesta->tipo = 1;
       printf("Ingrese el número al que desea apostar (0-36):\n");
       scanf("%d", &apuesta->numero);
       break;
     case 2: // Apuesta a color
-      apuesta->tipo = "Color";
+      apuesta->tipo = 2;
       printf("Ingrese el color al que desea apostar (Rojo, Negro, Verde):\n");
       char color[10];
       scanf("%s", color);
@@ -77,7 +83,7 @@ void crearApuesta(TipoApuesta* apuesta)
       }
       break;
     case 3: // Apuesta a paridad
-      apuesta->tipo = "Paridad";
+      apuesta->tipo = 3;
       printf("Ingrese la paridad a la que desea apostar (Par, Impar):\n");
       char paridad[10];
       scanf("%s", paridad);
@@ -92,7 +98,7 @@ void crearApuesta(TipoApuesta* apuesta)
       }
       break;
     case 4: // Apuesta a columna
-      apuesta->tipo = "Columna";
+      apuesta->tipo = 4;
       printf("Ingrese la columna a la que desea apostar (1 - 2 - 3):\n");
       scanf("%d", &apuesta->columna);
       if (apuesta->columna < 1 || apuesta->columna > 3) 
@@ -102,7 +108,7 @@ void crearApuesta(TipoApuesta* apuesta)
       }
       break;
     case 5: // Apuesta a docena
-      apuesta->tipo = "Docena";
+      apuesta->tipo = 5;
       printf("Ingrese la docena a la que desea apostar (1 - 2 - 3):\n");
       scanf("%d", &apuesta->docena);
       if (apuesta->docena < 1 || apuesta->docena > 3) 
@@ -112,7 +118,7 @@ void crearApuesta(TipoApuesta* apuesta)
       }
       break;
     case 6: // Apuesta a mitad
-      apuesta->tipo = "Mitad";
+      apuesta->tipo = 6;
       printf("Ingrese la mitad a la que desea apostar (1 - 2):\n");
       scanf("%d", &apuesta->mitad);
       if (apuesta->mitad < 1 || apuesta->mitad > 2) 
@@ -176,7 +182,7 @@ int evaluarApuesta(TipoApuesta *apuesta, TipoRuleta *ruleta)
   int resultado = ruleta->casillaActual;
   switch (apuesta->tipo)
     {
-      case "Número":
+      case 1:
         if (apuesta->numero == resultado)
         {
           printf("¡Felicidades! Has ganado!\n");
@@ -188,7 +194,7 @@ int evaluarApuesta(TipoApuesta *apuesta, TipoRuleta *ruleta)
           return 0;
         }
         break;
-      case "Color":
+      case 2:
         if (esRojo(resultado) && strcmp(apuesta->color, "Rojo") == 0 || esNegro(resultado) && strcmp(apuesta->color, "Negro") || resultado == 0 || resultado == 0 && strcmp(apuesta->color, "Verde") == 0))
         {
           printf("¡Felicidades! Has ganado!\n");
@@ -198,7 +204,7 @@ int evaluarApuesta(TipoApuesta *apuesta, TipoRuleta *ruleta)
           printf("Lo siento, has perdido.\n");
         }
         break;
-      case "Paridad":
+      case 3:
         if (strcmp(apuesta->paridad, "Par") == 0 && resultado % 2 == 0 || strcmp(apuesta->paridad, "Impar") == 0 && resultado % 2 != 0))
         {
           printf("¡Felicidades! Has ganado!\n");
@@ -208,7 +214,7 @@ int evaluarApuesta(TipoApuesta *apuesta, TipoRuleta *ruleta)
           printf("Lo siento, has perdido.\n");
         }
         break;
-      case "Columna":
+      case 4:
         if (apuesta->columna == obtenerColumna(resultado))
         {
           printf("¡Felicidades! Has ganado!\n");
@@ -218,7 +224,7 @@ int evaluarApuesta(TipoApuesta *apuesta, TipoRuleta *ruleta)
           printf("Lo siento, has perdido.\n");
         }
         break;
-      case "Docena":
+      case 5:
         if (apuesta->docena == 1 && resultado >= 1 && resultado <= 12 || apuesta->docena == 2 && resultado >= 13 && resultado <= 24 || apuesta->docena == 3 && resultado >= 25 && resultado <= 36)
         {
           printf("¡Felicidades! Has ganado!\n");
@@ -228,7 +234,7 @@ int evaluarApuesta(TipoApuesta *apuesta, TipoRuleta *ruleta)
           printf("Lo siento, has perdido.\n");
         }
         break;
-      case "Mitad":
+      case 6:
         if (apuesta->mitad == 1 && resultado >= 1 && resultado <= 18 || apuesta->mitad == 2 && resultado >= 19 && resultado <= 36))
         {
           printf("¡Felicidades! Has ganado!\n");
@@ -246,8 +252,6 @@ int evaluarApuesta(TipoApuesta *apuesta, TipoRuleta *ruleta)
 
 int Ruleta(int *chipCount)
 {
-  TipoRodillo* rodillo = CrearRodillo();
-
   char option; //Option del menu
   int apuesta = 0;
   do

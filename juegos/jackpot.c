@@ -67,7 +67,7 @@ TipoRodillo* CrearRodillo() {
  * @return Retorna 1 si el usuario gana, 0 si pierde
  */
 // 
-int VerificarPremio(TipoRodillo* rodillo) {
+int VerificarPremioJackpot(TipoRodillo* rodillo) {
     TipoCasilla* casilla1 = (TipoCasilla*)list_first(rodillo->listaCasillas);
     TipoCasilla* casilla2 = (TipoCasilla*)list_next(rodillo->listaCasillas);
     TipoCasilla* casilla3 = (TipoCasilla*)list_next(rodillo->listaCasillas);
@@ -128,7 +128,7 @@ int JackpotGame(int *cantFichasJugador) {
                 printf("Casilla %d: %s\n", i + 1, casilla->figura);
                 casilla = (TipoCasilla*)list_next(rodillo->listaCasillas);
             }
-            if (VerificarPremio(rodillo)){
+            if (VerificarPremioJackpot(rodillo)){
                 puts("========================================");
                 printf(" Has ganado %d fichas\n", (int)(apuesta*1.5));
                 puts(" ¡Bien Jugado!");

@@ -8,13 +8,13 @@
 #include <time.h>
 #include "../tdas/list.h"
 #include "../tdas/extra.h"
-#include "../tdas/stack.h"
+
 // Estructura para una casilla del rodillo
 typedef struct {
     char figura[10];
 } TipoCasilla;
 
-// Estructura para el rodillo
+
 typedef struct {
     List* listaCasillas;
 } TipoRodillo;
@@ -22,7 +22,7 @@ typedef struct {
 // Funciones del juego Jackpot
 TipoCasilla* CrearCasilla();
 TipoRodillo* CrearRodillo();
-int VerificarPremio(TipoRodillo* rodillo);
+int VerificarPremioJackpot(TipoRodillo* rodillo);
 int JackpotGame(int* chipCount);
 
 #endif

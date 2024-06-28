@@ -3,16 +3,27 @@
 #include <time.h>
 #include <string.h>
 
-
 #include "blackjack.h"
 
+struct TipoCarta{
+  char palo;
+  int valor;
+  int clave;
+};
+
+struct TipoBaraja{
+  List* listaCartas;
+};
+
+
+
 // Funcion comparación para el mapa
-int IsLowerInt(void *key1, void *key2) {
+static int IsLowerInt(void *key1, void *key2) {
   return *(int *)key1 <= *(int *)key2; 
 }
 
 
-void InicializarBaraja(TipoBaraja *baraja) { 
+void InicializarBarajaBL(TipoBaraja *baraja) { 
   baraja->listaCartas = list_create();
 
   int i, j, k = 0;
@@ -30,10 +41,9 @@ void InicializarBaraja(TipoBaraja *baraja) {
 
     }
   }
-  baraja->cartaActual = 0;  // Inicializa el índice de la próxima carta a repartir
 }
 
-Stack* MezclarBaraja(List* listaCartas) {
+Stack* MezclarBarajaBL(List* listaCartas) {
   // Crear mapa y stack
     Map* mapaCartas = sorted_map_create(IsLowerInt);
     Stack* barajada = stack_create(NULL);
@@ -69,7 +79,7 @@ Stack* MezclarBaraja(List* listaCartas) {
 }
 
 // Funcion para sacar una carta de la baraja
-TipoCarta* SacarCarta(Stack* barajada){
+TipoCarta* SacarCartaBL(Stack* barajada){
   TipoCarta* carta = stack_pop(barajada);
   return carta;
 }
@@ -162,7 +172,6 @@ void determinarGanador(int puntajeJugador, int puntajeDealer, int apuesta, int* 
     printf("Es un empate, se devuelve la apuesta.\n");
     *chipCount += apuesta;
   }
-  puts("xdddd");
 }
 
 void jugarBL(int *chipCount){
@@ -198,10 +207,10 @@ void jugarBL(int *chipCount){
   // Inicializar la baraja
 
   TipoBaraja barajaPrincipal;
-  InicializarBaraja(&barajaPrincipal);
+  InicializarBarajaBL(&barajaPrincipal);
 
   // Repartir cartas 1ra ronda
-  Stack* pilaCartas = MezclarBaraja((&barajaPrincipal)->listaCartas);
+  Stack* pilaCartas = MezclarBarajaBL((&barajaPrincipal)->listaCartas);
 
   int puntajeJugador = 0;
   int puntajeDealer= 0;
@@ -212,8 +221,8 @@ void jugarBL(int *chipCount){
   // Repartir cartas 1ra ronda
 
   for (int i = 0; i < 2; i++){
-    list_pushBack(cartasJugador, (TipoCarta*)SacarCarta(pilaCartas));
-    list_pushBack(cartasDealer, (TipoCarta*)SacarCarta(pilaCartas));
+    list_pushBack(cartasJugador, (TipoCarta*)SacarCartaBL(pilaCartas));
+    list_pushBack(cartasDealer, (TipoCarta*)SacarCartaBL(pilaCartas));
   }
 
   printf("Mano del jugador: ");
@@ -238,7 +247,7 @@ void jugarBL(int *chipCount){
   limpiarPantalla();
 
   while (respuestaJugador == 's' && puntajeJugador < 21){
-    list_pushBack(cartasJugador, (TipoCarta*)SacarCarta(pilaCartas));
+    list_pushBack(cartasJugador, (TipoCarta*)SacarCartaBL(pilaCartas));
     puntajeJugador = CalcularPuntaje(cartasJugador);
     printf("Mano del jugador: ");
     MostrarMano(cartasJugador);
@@ -254,7 +263,7 @@ void jugarBL(int *chipCount){
 
   // Pedir cartas al crupier
   while (puntajeDealer < 17){
-    list_pushBack(cartasDealer, (TipoCarta*)SacarCarta(pilaCartas));
+    list_pushBack(cartasDealer, (TipoCarta*)SacarCartaBL(pilaCartas));
     puntajeDealer = CalcularPuntaje(cartasDealer);
   }
   printf("================================\n");
@@ -273,7 +282,7 @@ void jugarBL(int *chipCount){
   printf("¿Desea volver a jugar? (s/n): ");
   scanf(" %c", &respuesta);
   if (respuesta == 's'){
-    jugarBL(*chipCount);
+    jugarBL(chipCount);
   }
   else{
     printf("Gracias por jugar.\n");
@@ -281,7 +290,7 @@ void jugarBL(int *chipCount){
   
 }
 
-int Blackjack(int *chipCount){
+int BlackjackGame(int *chipCount){
   char respuesta;
 
   while(1){

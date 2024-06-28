@@ -21,6 +21,11 @@ void InicializarBaraja(TipoBaraja *baraja) {
   baraja->cartaActual = 0;  // Inicializa el índice de la próxima carta a repartir
 }
 
+TipoCarta* SacarCarta(Stack* barajada){
+  TipoCarta* carta = stack_pop(barajada);
+  return carta;
+}
+
 Stack* MezclarBaraja(List* listaCartas) {
   // Crear mapa y stack
     Map* mapaCartas = sorted_map_create(IsLowerInt);

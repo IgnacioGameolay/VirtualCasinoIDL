@@ -11,23 +11,17 @@
 #include "../tdas/extra.h"
 
 // Definiciones de estructuras
-typedef struct {
-    int valor;
-    char palo;
-    int clave;
-} TipoCarta;
+typedef struct TipoCarta TipoCarta;
 
-typedef struct {
-    List* listaCartas;
-    List* cartasComunitarias;
-} TipoBaraja;
+typedef struct TipoBaraja TipoBaraja;
 
 // Funciones Auxiliares
 int CompararCartas(const void *data1, const void *data2);
 int CompararCartasMayorAMenor(const void *data1, const void *data2);
-int IsLowerInt(void *key1, void *key2);
-int is_equal_int(void *key1, void *key2);
-int is_equal_str(void *key1, void *key2);
+
+static int IsLowerInt(void *key1, void *key2);
+static int is_equal_int(void *key1, void *key2);
+static int is_equal_str(void *key1, void *key2);
 
 
 // Funciones para las barajas

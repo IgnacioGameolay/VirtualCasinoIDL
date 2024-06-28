@@ -16,6 +16,6 @@ typedef struct {
 
 void InicializarBaraja(TipoBaraja* baraja);
 Stack* MezclarBaraja(List* listaCartas);
-
+TipoCarta* SacarCarta(Stack* barajada);
 
 #endif
