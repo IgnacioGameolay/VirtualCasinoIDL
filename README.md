@@ -2,8 +2,7 @@
 
 ## Descripción del programa
 
-Este programa cumple la funcionalidad de ser un solucionador para rompecabezas de 8 piezas, mejor conocido como 8-Puzzle. Lo anterior implica que así a los usuarios cargar películas, buscar por id, buscar por director, buscar por género, buscar por década, buscar por rango de calificaciones, buscar por década y género (doble filtro). 
-Este programa está enfocado para facilitar la búsqueda y filtraje de películas dada una base de datos. Además, el sistema resulta, ser intuitivo y fácil de utilizar.
+Este programa cumple la funcionalidad de ser un simulador de juegos de casino, proporcionando seis juegos diferentes: Póker, Blackjack, Higher Or Lower, Ruleta, Jackpot, y Craps. El objetivo es ofrecer una experiencia de casino interactiva y fácil de usar a través de una consola, buscando una solución divertida a esos momentos de ocio y aquellos sin conexión a internet, esto dado que los juegos implementados son off-line.
 
 
 
@@ -15,154 +14,270 @@ Para ello seguir los siguientes pasos:
 1. Visitar [Repl.it](https://repl.it/).
 2. Crear una nueva cuenta o iniciar sesión si ya tienes una.
 3. Estando en el `dashboard`, seleccionar la opción "`New Repl`" y eligir "`Import from GitHub`".
-4. Clonar el repositorio de GitHub: `https://github.com/IgnacioGameolay/Tarea3.git`
+4. Clonar el repositorio de GitHub: `https://github.com/IgnacioGameolay/VirtualCasinoIDL.git`
 5. [Repl.it](http://repl.it/) clonará el repositorio y preparará el entorno de ejecución automáticamente.
-6. Finalmente, presionar el botón "Run" para compilar y ejecutar la aplicación de manera automática. O bien, compilar el código manualmente utilizando: `gcc tdas/*.c tarea3.c -Wno-unused-result -o tarea3` , y posteriormente ejecutar con: `./tarea3`
+6. Finalmente, presionar el botón "Run" para compilar y ejecutar la aplicación de manera automática. O bien, compilar el código manualmente utilizando: `gcc tdas/*.c juegos/*.c main.c -Wno-unused-result -o main` , y posteriormente ejecutar con: `./main`
 
 
 ## Funcionalidades
 
 ### Funcionando correctamente:
 
-- Resolver el puzzle utilizando Búsqueda en Profundidad (DFS)
-- Resolver el puzzle utilizando Búsqueda en Profundidad (BFS)
-- Resolver el puzzle utilizando Búsqueda de Mejor Primero (Best-First Search)
-- Salir del sistema.
-
+- Todos los juegos.
+- Impresión de eventos por consola.
+- Sistema de guardado, carga y reinicio de fichas (progreso).
+- Sistema de rondas bonus.
+- Todos los sistemas en orden.
 ### Problemas conocidos:
 
-- Se visitan nodos o estados que ya han sido visitados anteriormente, lo que aumenta el número de iteraciones. Esto pordría ocurrir debido a la naturaleza del almacenamiento de los nodos adyacentes en la estructura.
-- Si se modifica la posición inicial o final desde el código, el programa debería de ser capaz de solucionarlo, pero es probable que si el estado ingresado está muy alejado de la respuesta, el programa podría no encontrar la solución por limitaciones de memoria y/o altura.
-- Al estar las búsquedas limitadas por altura, es probable que para ciertos estados iniciales no alcance a hallar soluciones.
+- Algunos juegos podrían tener limitaciones de memoria y/o ejecución dependiendo del entorno en el que se ejecuten.
+- Si bien no es un problema, pueden llegar a haber inconsistencias ente las reglas de algunos juegos implementados con las reglas tradicionales de los juegos de la vida real, esto debido a que el simulador adaptó las reglas para darle un toque personal y distinto a los juegos.
 
 ### A mejorar:
 
-- Permitir la inserción manual de estados iniciales y altura máxima personalizados.
-- Incorporar la funcionalidad de marcar los nodos o estados que ya han sido visitados, ahorrando así iteraciones y permitiendo búsquedas más eficaces.
-- Implementar y desarrollar una interfaz que facilite al usuario trabajar con el sistema mucho más cómodamente que por consola.
+- Incorporar una interfaz gráfica para mejorar la experiencia del usuario.
+- Mejorar la eficiencia de los algoritmos utilizados en los juegos para reducir el consumo de memoria y tiempo de ejecución.
+- Añadir funcionalidades adicionales como multijugador y tablas de clasificación global.
 
 ## Ejemplo de uso
-A continuación, veremos un ejemplo de cómo utilizar el sistema para buscar la solución a un 8-puzzle dado un estado inicial.
-Para ello, al iniciar el sistema tendremos el siguiente menú con el cual interactuar:
+A continuación, veremos un ejemplo de cómo utilizar el sistema para jugar uno de los juegos disponibles. 
+
+Cabe mencionar que el sistema de guardado es automático y manual, es decir, el progreso se guarda cada que vez que volvemos al menú principal, pero de igual manera podemos seleccionar la opción "8" para guardar manualmente. Por otro lado, la ronda bonus es una probabilidad de 1 en 100, en ella el usuario gana una cantidad adicional correspondiente a la mitad de lo que haya ganado al final de la sesión de juego.
+
+Con lo anterior en cuenta, veremos un ejemplo de uso, y es que al iniciar el sistema tendremos el siguiente menú principal con el cual interactuar:
 
 ``` 
 ========================================
-	  Estado inicial del puzzle:
-
-x 2 8 
-1 3 4 
-6 5 7 
+   Bienvenido al Casino Virtual IDL
 ========================================
 ========================================
-	  Escoge método de búsqueda
+
+   Cantidad Actual de Fichas: $1000
+
 ========================================
-1) Búsqueda en Profundidad
-2) Buscar en Anchura
-3) Buscar Mejor Primero
-4) Salir
-Ingrese su opción: 
-```
-En este menú, podremos seleccionar una de las 4 opciones cuando se nos solicite `Ingrese su opción: `.
-
-Los nombres de las opciones son bastante descriptivas (hacen lo que mencionan), pero de igual manera a continuación se mostrarán los pasos a seguir en el caso de uso de cada uno de las búsquedas disponibles. Adicionalmente, cabe mencionar que cada opción de búsqueda imprimirá por consola todos los estados visitados hasta llegar al estado final (El '0' es representado por una 'x', que vendría siendo la casilla vacía o nula):
-
-``` 
-		x 1 2 
-		3 4 5 
-		6 7 8 
-```
-
-
-**Opción 1 - Búsqueda en Profundidad (DFS)**
-
-Luego de seleccionar la opción 1, veremos cómo se van recorriendo distintos estados del puzzle hasta llegar al estado final. En esta búsqueda se emplea el uso de una Pila o "Stack" para guardar o almacenar los estados actuales del puzzle, de los cuales luego se calcularán sus estados adyacentes o vecinos, esto se realiza moviendo la casilla vacía en una dirección válida (arriba, abajo, izquierda, derecha). Este procedimiento se repite hasta dar con el estado final. Y como se podrá ver en un ejemplo a continuación, la casilla nula o vacía se moviliza entre los estados adyacentes dado un estado:
-
-```
-Ingrese su opción: 1
---Estado N°0--
-x 2 8 
-1 3 4 
-6 5 7 
-
---Estado N°1--
-1 2 8 
-x 3 4 
-6 5 7 
-
---Estado N°2--
-2 x 8 
-1 3 4 
-6 5 7 
-....
-
---FINAL DFS-- Con 119558 Iteraciones
-x 1 2 
-3 4 5 
-6 7 8 
-
-```
-
-**Opción 2 - Búsqueda en Amplitud (BFS)**
-
-Similar a la primera opción, en esta búsqueda se emplea una Cola o Queue para almacenar los nuevos estados que se van generando. La principal diferencia con la Búsqueda en Profundidad, es que se evalúan todos los estados vecinos antes de pasar a evaluar los estados de la Cola. A continuación un ejemplo:
-
-```
-Ingrese su opción: 2
---Estado N°0--
-x 2 8 
-1 3 4 
-6 5 7 
-
---Estado N°1--
-1 2 8 
-x 3 4 
-6 5 7 
-
---Estado N°2--
-2 x 8 
-1 3 4 
-6 5 7 
-....
-
---FINAL BFS-- con 221143 iteraciones
-x 1 2 
-3 4 5 
-6 7 8 
-
-```
-
-**Opción 3 - Búsqueda del Mejor Primero (Best-First Search)**
-
-Al seleccionar la 3ra opción, se realizará una búsqueda por el mejor primero, aplicando una "función heurística", o bien, función de evaluación, conocida como distancia de "Manhattan", siendo en este caso la la cantidad de acciones más corta que le tomaría a un numero en una determinada posición llegar a su casilla/posición final. Para ello en cada iteración se selecciona al nodo que tiene el valor más bajo (la distancia más corta) y se les da mayor prioridad en el HEAP (estructura utilizada) por estar más cerca del resultado. El resto es similar a las opciones anteriores, a continuación el ejemplo:
-
-```
-Ingrese su opción: 3
---Estado N°0--
-x 2 8 
-1 3 4 
-6 5 7 
-
---Estado N°1--
-1 2 8 
-x 3 4 
-6 5 7 
-
---Estado N°2--
-2 x 8 
-1 3 4 
-6 5 7 
-....
-
---FINAL BEST_FIRST-- con 299006 iteraciones
-x 1 2 
-3 4 5 
-6 7 8 
-```
-
-**Opción 4: Salir**
-
-Finalmente, para terminar la ejecución del programa, seleccionamos la opción 4 y finalizará automáticamente.
-
-***Cualquier consulta o duda que pueda surgir, contactarse al siguiente mail: 
-ireyestoledo8@gmail.com***
+(1) Blackjack (Apuesta mínima $25)
+(2) Poker (Apuesta mínima $25)
+(3) Higher or Lower (Apuesta mínima $100)
+(4) Ruleta (Apuesta mínima $25)
+(5) Jackpot (Apuesta mínima $25)
+(6) Craps (Apuesta mínima $50)
 -
+(7) Reiniciar Progreso
+(8) Guardar Progreso
+(9) Cargar Progreso
+(0) Salir del Casino
+========================================
+Ingrese su opción: 
+========================================
+
+```
+En este menú, podremos seleccionar una de las 10 opciones cuando se nos solicite `Ingrese su opción: `.
+
+Los nombres de las opciones son bastante descriptivas (hacen lo que mencionan), pero de igual manera a continuación se mostrarán los pasos a seguir en el caso de uso de uno de los 6 juegos implementados. Dado que son muchos juegos y todos siguen la misma estructura, se utilizará un único juego de ejemplo, siendo este el Jackpot. Dicho esto, vamos con un recorrido desde que empezamos a jugar hasta que salimos del simulador:
+
+**Primer Paso - Escoger Juego**
+
+Al seleccionar la opción de nuestro juego, en este caso el **Jackpot**, se nos mostrará por consola el sub-menú del juego escogido, dando la opción de entrar directamente a jugar, consultar por las reglas que se han adaptado al simulador, y por ultimo volver al menú principal si se desea. A continuación un ejemplo:
+
+```
+========================================
+Ingrese su opción: 
+========================================
+5
+========================================
+ Bienvenido a Jackpot.
+========================================
+
+   Cantidad Actual de Fichas: 339
+
+========================================
+(1) Jugar
+(2) Reglas
+(3) Volver al menú principal
+========================================
+Ingrese su opción: 
+========================================
+
+```
+
+**Segundo Paso - Escoger Opción Deseada**
+
+Como se mencionó anteriormente se nos dan 3 opciones a elegir, a continuación veremos qué pasa al escoger cada una, nos centraremos en la opción de jugar, pero se dejará un ejemplo a continuación de qué se mostraría al escoger la 2da opción:
+
+```
+========================================
+Objetivo: Obtener una combinación de símbolos idénticos en todas las casillas del rodillo.
+
+Inicio del Juego: El jugador podrá ingresar la cantidad de fichas que desea apostar.
+
+Rodillo: El rodillo está compuesto por 3 casillas, cada una mostrando un símbolo geométrico (cuadrado, triángulo, círculo, y pentágono).
+
+Opciones del Jugador: Después de realizar la apuesta, el jugador podrá hacer girar el rodillo para ver la combinación de símbolos resultante.
+
+Condiciones de Victoria: El jugador gana si todos los símbolos de la combinación son iguales. Caso contrario pierde.
+
+Resultado: Después de evaluar la combinación de símbolos, se informará al jugador si ha ganado o perdido, junto con la cantidad de fichas ganadas o perdidas.
+
+========================================
+
+Presione una tecla para continuar...
+
+```
+
+**Tercer Paso - Empezar a jugar**
+
+Al seleccionar la 1ra opción, pasaremos al sub-menú de juego, en el que podremos apostar y finalmente empezar a divertirnos. A continuación el sub-menú del Jackpot tanto si ganamos como si perdemos:
+
+```
+========================================
+ Bienvenido a Jackpot.
+========================================
+
+   Cantidad Actual de Fichas: 1000
+
+========================================
+(1) Jugar
+(2) Reglas
+(3) Volver al menú principal
+========================================
+Ingrese su opción: 
+========================================
+1
+========================================
+¡Muy bien, vamos a jugar!
+ Ingrese su apuesta: 
+100
+========================================
+Resultados:
+Casilla 1: pentágono
+Casilla 2: pentágono
+Casilla 3: pentágono
+========================================
+ Has ganado 150 fichas
+ ¡Bien Jugado!
+ Volviendo al menú principal....
+========================================
+Presione una tecla para continuar...
+
+```
+
+Por otra parte, un ejemplo de derrota:
+
+```
+========================================
+ Bienvenido a Jackpot.
+========================================
+
+   Cantidad Actual de Fichas: 1000
+
+========================================
+(1) Jugar
+(2) Reglas
+(3) Volver al menú principal
+========================================
+Ingrese su opción: 
+========================================
+1
+========================================
+¡Muy bien, vamos a jugar!
+ Ingrese su apuesta: 
+200
+========================================
+Resultados:
+Casilla 1: cuadrado
+Casilla 2: triangulo
+Casilla 3: pentágono
+========================================
+ Has perdido 200 fichas
+ ¡Mejor suerte para la próxima!
+ Volviendo al menu principal....
+========================================
+Presione una tecla para continuar...
+```
+
+
+**Cuarto Paso - ¿Qué hacer después de jugar?**
+
+Luego de terminar cualquier juego y volver al menú principal, el usuario tiene la posibilidad de escoger cualquiera de los juegos, volviendo así al **1er paso**.
+
+**Pasos Adicionales - Sistemas de Guardado y Ronda Bonus**
+
+Adicionalmente, si el usuario tiene la fortuna de ganar una ronda bonus, verá un mensaje como siguiente mensaje:
+```
+========================================
+¡Felicidades, has ganado una ronda bonus!
+Has ganado 100 fichas extra
+========================================
+```
+
+Por otro lado, si el usuario quisiera guardar, cargar y reiniciar su progreso vería lo siguiente:
+
+Para Guardar:
+```
+========================================
+Ingrese su opción: 
+========================================
+8
+========================================
+Progreso guardado con éxito
+========================================
+Presione una tecla para continuar...
+```
+
+Para Cargar:
+```
+========================================
+Ingrese su opción: 
+========================================
+8
+========================================
+Progreso cargado con éxito
+========================================
+Presione una tecla para continuar...
+```
+
+En el caso de que no se logre cargar el progreso aparecerá lo siguiente y será reiniciado a la cantidad de fichas iniciales (1000):
+```
+========================================
+Ingrese su opción: 
+========================================
+9
+========================================
+Progreso no pudo ser guardado
+========================================
+Presione una tecla para continuar...
+```
+
+Para Reiniciar el progreso:
+```
+========================================
+Ingrese su opción: 
+========================================
+7
+========================================
+Progreso reiniciado con éxito. Cantidad de fichas actuales: 1000
+========================================
+Presione una tecla para continuar...
+```
+
+
+Finalmente, para terminar la ejecución del programa, seleccionamos la opción 0 en el menú principal y finalizará automáticamente.
+
+
+***Cualquier consulta o duda que pueda surgir, contactarse a cualquiera de los siguientes mails:***
+ -
+- ignacio.reyes.t@mail.pucv.cl 
+-  diego.alvarado.m@mail.pucv.cl 
+- lucas.pinto.a@mail.pucv.cl
+
+Aportes individuales:
+-
+- Ignacio Reyes: Este integrante demostró una disposición y dedicación ejemplar a lo largo de la realización del proyecto, liderando y aportando ideas/soluciones de manera óptima. Fue el encargado de desarrollar los sistemas de guardado, ronda bonus, incorporar los juegos al main(), y de desarrollar el juego Poker y Jackpot.
+
+- Lucas Pinto: Trabaja de manera eficaz en las tareas asignadas, ayudando en todo lo que pudiera y desarrollando correctamente sus juegos asignados, siendo estos la Ruleta/Roulette y el Craps. Se destaca su destreza para implementar estos complejos juegos de manera simple y eficiente al simulador.
+
+
+- Diego Alvarado: Este integrante colaboró activamente en sus tareas asignadas, ayudando en aportar ideas y distintos puntos de vista, lo que permitió implementar ideas creativas y soluciones óptimas. Fue el encargado de desarrollar los juegos de cartas Blackjack y Higher or Lower.
+    
+
+    
