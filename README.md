@@ -52,7 +52,7 @@ Con lo anterior en cuenta, veremos un ejemplo de uso, y es que al iniciar el sis
 ========================================
 ========================================
 
-   Cantidad Actual de Fichas: $1000
+   Cantidad Actual de Fichas: 1000
 
 ========================================
 (1) Blackjack (Apuesta mínima $25)
@@ -88,7 +88,7 @@ Ingrese su opción:
  Bienvenido a Jackpot.
 ========================================
 
-   Cantidad Actual de Fichas: 339
+   Cantidad Actual de Fichas: 1000
 
 ========================================
 (1) Jugar
