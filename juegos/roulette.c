@@ -1,5 +1,6 @@
 #include "roulette.h"
-
+#define NUM_CASILLAS 37
+#define MIN_CHIPS 25
 
 // Estructura para representar de mejor manera la apuesta
 // A que se está apostando(numero, color, paridad, columna, docena, mitad, tipo) y el monto.
@@ -289,6 +290,7 @@ int RouletteGame(int *chipCount)
 {
   char option; //Option del menu
   TipoApuesta apuesta; //Apuesta a realizar
+  apuesta.tipo == 0;
   int resultado; //Resultado de la juego
   
   
@@ -314,12 +316,20 @@ int RouletteGame(int *chipCount)
       case '1':
         InicializarRuleta(&ruleta);
         CrearApuestaRoulette(&apuesta, chipCount);
+        if(apuesta.tipo == 0)
+        {
+          break;
+        }
         GirarRuleta(&ruleta);
         resultado = EvaluarApuestaRoulette(&apuesta, &ruleta);
         if (resultado == 1){
           
           apuesta.monto += RondaBonus(&(apuesta.monto));
           *chipCount += apuesta.monto;
+        }
+        else
+        {
+          *chipCount -= apuesta.monto;
         }
         break;
         case '2':

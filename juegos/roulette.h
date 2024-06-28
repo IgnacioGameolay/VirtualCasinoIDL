@@ -11,7 +11,7 @@
 #include "../tdas/extra.h"
 #include "rondaBonus.h"
 #define NUM_CASILLAS 37
-#define MIN_CHIPS 50
+#define MIN_CHIPS 25
 
 // Estructura para representar de mejor manera la apuesta
 // A que se está apostando(numero, color, paridad, columna, docena, mitad, tipo) y el monto.

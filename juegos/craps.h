@@ -14,10 +14,13 @@
 
 #define MAX_CARAS 6
 
+// Estructura para silumar los dados y sus caras
 typedef struct TipoDado TipoDado;
 
+// Estructura para silumar la apuesta
 typedef struct TipoApuesta TipoApuesta;
 
+// Estructura para silumar el tipo de juego deseado
 typedef struct TipoJuego TipoJuego;
 
 // Función para inicializar la ronda de dados y el juego
@@ -33,27 +36,14 @@ static void CrearApuestaCraps(TipoApuesta *apuesta, TipoJuego *juego);
 // Función para lanzar los dados y devolver el índice del resultado
 // @param *dados Puntero a la estructura TipoDado que representa los dados
 // @return Índice del resultado obtenido al lanzar los dados
-int LanzarDados(TipoDado *dados);
-
-// Función para evaluar una apuesta a favor del número a venir
-// @param *apuesta Puntero a la estructura TipoApuesta que representa la apuesta realizada
-// @param *juego Puntero a la estructura TipoJuego que representa el estado del juego
-// @param *dados Puntero a la estructura TipoDado que representa los dados
-// @return Retorna 1 si la apuesta es ganadora, de lo contrario 0
-int EvaluarApuestaFavor(TipoApuesta *apuesta, TipoJuego *juego, TipoDado *dados);
-
-// Función para evaluar una apuesta en contra del número a venir
-// @param *apuesta Puntero a la estructura TipoApuesta que representa la apuesta realizada
-// @param *juego Puntero a la estructura TipoJuego que representa el estado del juego
-// @param *dados Puntero a la estructura TipoDado que representa los dados
-// @return Retorna 1 si la apuesta es ganadora, 0 si es perdedora, 3 si hay empate
-int EvaluarApuestaContra(TipoApuesta *apuesta, TipoJuego *juego, TipoDado *dados);
+void LanzarDados(TipoDado *dados);
 
 // Función para evaluar una apuesta según el tipo y el estado del juego
 // @param *apuesta Puntero a la estructura TipoApuesta que representa la apuesta realizada
 // @param *dados Puntero a la estructura TipoDado que representa los dados
 // @param *juego Puntero a la estructura TipoJuego que representa el estado del juego
-static int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego);
+// @return Retorna el resultado de la apuseta
+static int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego, int suma, int sumaPunto);
 
 // Función principal del juego de Craps
 // @param *chipCount Puntero a la cantidad de fichas del jugador

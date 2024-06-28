@@ -73,7 +73,7 @@ Ingrese su opción:
 ```
 En este menú, podremos seleccionar una de las 10 opciones cuando se nos solicite `Ingrese su opción: `.
 
-Los nombres de las opciones son bastante descriptivas (hacen lo que mencionan), pero de igual manera a continuación se mostrarán los pasos a seguir en el caso de uso de uno de los 6 juegos implementados. Dado que son muchos juegos y todos siguen la misma estructura, se utilizará un único juego de ejemplo, siendo este el Jackpot. Dicho esto, vamos con un recorrido desde que empezamos a jugar hasta que salimos del simulador:
+Los nombres de las opciones son bastante descriptivas (hacen lo que mencionan), pero de igual manera a continuación se mostrarán los pasos a seguir en el caso de uso de uno de los 6 juegos implementados. Dado que son muchos juegos y todos siguen la misma estructura, se utilizará un único juego de ejemplo, siendo este el Jackpot. Adicionalmente, como método de verificación auxiliar al ingresar una opción, si el usuario ingresa un número no comprendido entre las opciones, se tomará el 1er dígito de este como opción escogida, y, si se ingresa una entrada no numérica entonces no se tomará el ingreso realizado. Dicho esto, vamos con un recorrido desde que empezamos a jugar hasta que salimos del simulador:
 
 **Primer Paso - Escoger Juego**
 
