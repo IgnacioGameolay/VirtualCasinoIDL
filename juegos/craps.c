@@ -114,9 +114,9 @@ void LanzarDados(TipoDado *dados)
 
 
 // Función para evaluar una apuesta según el tipo y el estado del juego
-int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego, int suma, int sumaPunto)
+int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego, int suma)
 {
-  int sumaPuntoVenir;
+  int sumaPunto, sumaPuntoVenir;
   switch (apuesta->tipo)
   {
     case 1: // Línea de Pase
@@ -139,19 +139,25 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
       } 
       else
       { // Tiro de punto
-        if (sumaPunto == juego->punto)
+        while(1)
         {
-          puts("========================================");
-          printf("Ganaste la apuesta de Línea de Pase!\n");
-          puts("========================================");
-          return 1;
-        } 
-        else if (sumaPunto == 7)
-        {
-          puts("========================================");
-          printf("Perdiste la apuesta de Línea de Pase.\n");
-          puts("========================================");
-          return 0;
+          LanzarDados(dados);
+          sumaPunto = dados->cara1 + dados->cara2;
+          printf("Lanzamientos: %d + %d = %d\n", dados->cara1, dados->cara2, sumaPunto);
+          if (sumaPunto == 7)
+          {
+            puts("========================================");
+            printf("Perdiste la apuesta de Línea de Pase.\n");
+            puts("========================================");
+            return 0;
+          }
+          else if(sumaPunto == suma)
+          {
+            puts("========================================");
+            printf("Ganaste la apuesta de Línea de Pase!\n");
+            puts("========================================");
+            return 1;
+          }
         }
       }
       break;
@@ -182,23 +188,32 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
       } 
       else 
       { // Tiro de punto
-        if (sumaPunto == 7)
+        while(1)
         {
-          puts("========================================");
-          printf("Ganaste la apuesta de Barra de No Pase!\n");
-          puts("========================================");
-          return 1;
-        } 
-        else if (sumaPunto == juego->punto) 
-        {
-          puts("========================================");
-          printf("Perdiste la apuesta de Barra de No Pase.\n");
-          puts("========================================");
-          return 0;
+          LanzarDados(dados);
+          sumaPunto = dados->cara1 + dados->cara2;
+          printf("Lanzamientos: %d + %d = %d\n", dados->cara1, dados->cara2, sumaPunto);
+          if (sumaPunto == 7)
+          {
+            puts("========================================");
+            printf("Ganaste la apuesta de Barra de No Pase.\n");
+            puts("========================================");
+            return 1;
+          }
+          else if(sumaPunto == suma)
+          {
+            puts("========================================");
+            printf("Perdiste la apuesta de Barra de No Pase.\n");
+            puts("========================================");
+            return 0;
+          }
         }
       }
       break;
       case 3: // A favor del número a venir
+        LanzarDados(dados);
+        sumaPunto = dados->cara1 + dados->cara2;
+        printf("Lanzamientos: %d + %d = %d\n", dados->cara1, dados->cara2, sumaPunto);
         if (sumaPunto ==  7 || sumaPunto == 11)
         {
           puts("========================================");
@@ -236,6 +251,9 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
         }
         break;
       case 4: // En contra del número a venir
+        LanzarDados(dados);
+        sumaPunto = dados->cara1 + dados->cara2;
+        printf("Lanzamientos: %d + %d = %d\n", dados->cara1, dados->cara2, sumaPunto);
         if (sumaPunto ==  2 || sumaPunto == 3)
           {
             puts("========================================");
@@ -254,7 +272,7 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
           {
             puts("========================================");
             printf("Empate en la apuesta en contra del número a venir.\n");
-            puts("========================================");
+            puts("========================================");  
             return 2;
           }
           else
@@ -268,11 +286,17 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
               printf("Lanzamiento: %d + %d = %d\n", dados->cara1, dados->cara2, sumaPuntoVenir);
               if(sumaPuntoVenir == 7)
               {
+                puts("========================================");
                 printf("Ganaste la apuesta en contra del número a venir!\n");
+                puts("========================================");
+                return 1;
               }
               else if(sumaPuntoVenir == juego->punto)
               {
+                puts("========================================");
                 printf("Perdiste la apuesta en contra del número a venir.\n");
+                puts("========================================");
+                return 0;
               }
             }
           }
@@ -336,16 +360,7 @@ int CrapsGame(int *chipCount)
           }
         }
 
-        if(juego.estado == 2)
-        {
-          do
-          {
-            LanzarDados(&dados);
-            sumaPunto = dados.cara1 + dados.cara2;
-            printf("Lanzamiento: %d + %d = %d\n", dados.cara1, dados.cara2, sumaPunto); 
-          } while (sumaPunto != 2 && sumaPunto != 3 && sumaPunto != 7 & sumaPunto != 11 && sumaPunto != 12 && sumaPunto != juego.punto);
-        }
-        resultado = EvaluarApuestaCraps(&apuesta, &dados, &juego, suma, sumaPunto);
+        resultado = EvaluarApuestaCraps(&apuesta, &dados, &juego, suma);
         if (resultado == 1)
         {
           apuesta.monto += RondaBonus(&(apuesta.monto));
@@ -357,7 +372,29 @@ int CrapsGame(int *chipCount)
         }
         break;
         case '2':
-            puts("Las reglas son...");
+            puts("El clásico juego de Craps adaptado a este programa! Se han simplificado algunas reglas, así que te las explicaré a continuación:");
+            puts("Primero, este juego consta de 2 etapas: Un tiro de salida, y si se establece un punto, pasas a la etapa del tiro de punto! Un tiro consistirá en el lanzar 2 dados comunes, de 6 caras.");
+          puts("==================================================================================");
+            puts("Que qué rayos es un tiro de salida y un tiro de punto? Pues aquí te lo explico!");
+            puts("Un tiro de salida es el primer tiro que realizas en una ronda de Craps. Se considerarán como números determinantes para este tiro los números 2, 3, 7, 11 y 12. Cualquier otro número se considerará punto y pasará a la 2da etapa del juego.");
+            puts("Este tiro tiene 2 tipos de apuestas asociados a él, que solo pueden ser hechas antes del tiro: Línea de Pase y Barra de No Pase.");
+            puts("==================================================================================");
+            puts("Una Apuesta de línea de pase consiste en que le apuestas a que en tu tiro de salida el número que se obtiene con la suma de los 2 dados sea igual a 7 u 11.");
+            puts("Si el número llegase a ser un 2, 3 o 12, se considerará perdida la apuesta.");
+            puts("Si tu tiro de salida fuera cualquier otro número, ese número se considerará tu punto, y deberás lanzar los dados hasta que obtengas el punto para ganar.");
+            puts("Si obtienes un 7 antes de obtener tu punto, automáticamente perderás tu apuesta.");
+          puts("Una Apuesta de Barra de No Pase consiste en que le apuestas a que en tu tiro de salida el número que se obtiene con la suma de los 2 dados sea igual a 2 u 3.");
+          puts("Si el número llegase a ser un 7 o un 11, se considerará perdida la apuesta.");
+          puts("Si el número es un 12, wow! Has empatado tu apuesta! No perderás ni ganarás dinero en este caso");
+          puts("Si tu tiro de salida fuera cualquier otro número, ese número se considerará tu punto, y deberás lanzar los dados hasta que obtengas un 7 para ganar.");
+          puts("Si obtienes tu punto de nuevo antes que el 7, automáticamente perderás tu apuesta.");
+          puts("==================================================================================");
+          puts("Un tiro de punto es el tiro que realizas después de haber establecido un punto. Para este tiro, se tienen 2 tipos de apuestas, que solo pueden ser hechas después de haber hecho un tiro de salida. Estas son: La apuesta a favor del número a venir y la apuesta en contra del número a venir.");
+          puts("La apuesta a favor del número a venir consiste en que le apuestas a que en cualquier tiro hecho después, obtendrás o un 7 o un 11. Si obtienes un 2, 3 o 12, se considerará perdida la apuesta.");
+          puts("Si obtienes cualquier otro número, este se convertirá en tu punto a venir y si vuelves a rollear tu punto a venir, ganas. Si rolleas un 7, pierdes!");
+          puts("La apuesta en contra del número a venir consiste en que le apuestas a que en cualquier otro tiro hecho después, obtendrás un 2 u 3. Si obtienes un 12, has empatado! Cualquier otro número se volverá tu punto a venir");
+          puts("Si obtienes un 7, felicidades! Has ganado tu apuesta! Pero si vuelves a rollear tu punto a venir, perderás tu apuesta.");
+          
             break;
         case '3':
             return 0;

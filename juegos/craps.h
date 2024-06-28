@@ -43,7 +43,7 @@ void LanzarDados(TipoDado *dados);
 // @param *dados Puntero a la estructura TipoDado que representa los dados
 // @param *juego Puntero a la estructura TipoJuego que representa el estado del juego
 // @return Retorna el resultado de la apuseta
-static int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego, int suma, int sumaPunto);
+static int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego, int suma);
 
 // Función principal del juego de Craps
 // @param *chipCount Puntero a la cantidad de fichas del jugador
