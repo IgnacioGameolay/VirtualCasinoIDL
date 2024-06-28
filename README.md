@@ -110,7 +110,7 @@ Objetivo: Obtener una combinación de símbolos idénticos en todas las casillas
 
 Inicio del Juego: El jugador podrá ingresar la cantidad de fichas que desea apostar.
 
-Rodillo: El rodillo está compuesto por 3 casillas, cada una mostrando un símbolo geométrico (cuadrado, triángulo, círculo, y pentágono).
+Rodillo: El rodillo está compuesto por 3 casillas, cada una mostrando un símbolo geométrico (cuadrado, triángulo, círculo, y pentagono).
 
 Opciones del Jugador: Después de realizar la apuesta, el jugador podrá hacer girar el rodillo para ver la combinación de símbolos resultante.
 
@@ -149,9 +149,9 @@ Ingrese su opción:
 100
 ========================================
 Resultados:
-Casilla 1: pentágono
-Casilla 2: pentágono
-Casilla 3: pentágono
+Casilla 1: pentagono
+Casilla 2: pentagono
+Casilla 3: pentagono
 ========================================
  Has ganado 150 fichas
  ¡Bien Jugado!
@@ -186,7 +186,7 @@ Ingrese su opción:
 Resultados:
 Casilla 1: cuadrado
 Casilla 2: triangulo
-Casilla 3: pentágono
+Casilla 3: pentagono
 ========================================
  Has perdido 200 fichas
  ¡Mejor suerte para la próxima!

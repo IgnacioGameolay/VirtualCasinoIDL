@@ -11,14 +11,10 @@
 #include "rondaBonus.h"
 
 // Estructura para una casilla del rodillo
-typedef struct {
-    char figura[10];
-} TipoCasilla;
+typedef struct TipoCasilla TipoCasilla;
 
 // Estructura para una rodillo de casillas
-typedef struct {
-    List* listaCasillas;
-} TipoRodillo;
+typedef struct TipoRodillo TipoRodillo;
 
 
 // Función para crear una casilla del rodillo de jackpot

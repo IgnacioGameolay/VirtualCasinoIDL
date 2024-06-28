@@ -27,7 +27,7 @@ void InicializarRuleta(TipoRuleta *ruleta);
 // Función para crear una apuesta
 // @param *apuesta Puntero a la estructura TipoApuesta que representa la apuesta
 // @param *chips Puntero a la cantidad de fichas del jugador
-void CrearApuesta(TipoApuesta* apuesta, int *chips);
+static void CrearApuestaRoulette(TipoApuesta* apuesta, int *chips);
 
 // Función para girar la ruleta
 // @param *ruleta Puntero a la estructura TipoRuleta que representa la ruleta
@@ -52,7 +52,7 @@ int ObtenerColumna(int numero);
 // @param *apuesta Puntero a la estructura TipoApuesta que representa la apuesta
 // @param *ruleta Puntero a la estructura TipoRuleta que representa la ruleta
 // @return Retorna 1 si la apuesta es ganadora, de lo contrario 0
-int EvaluarApuesta(TipoApuesta *apuesta, TipoRuleta *ruleta);
+static int EvaluarApuestaRoulette(TipoApuesta *apuesta, TipoRuleta *ruleta);
 
 // Función principal del juego de ruleta
 // @param *chipCount Puntero a la cantidad de fichas del jugador

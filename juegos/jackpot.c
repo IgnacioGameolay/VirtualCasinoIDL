@@ -1,5 +1,14 @@
 #include "jackpot.h"
 
+// Estructura paa una casilla del rodillo
+struct TipoCasilla{
+    char figura[10];
+};
+
+// Estructura para una casilla del rodillo
+struct TipoRodillo{
+    List* listaCasillas;
+};
 
 
 //Función para crear una casilla del rodillo de jackpot
@@ -17,13 +26,13 @@ TipoCasilla* CrearCasilla() {
             strcpy(casilla->figura, "cuadrado");
             break;
         case 1:
-            strcpy(casilla->figura, "triángulo");
+            strcpy(casilla->figura, "triangulo");
             break;
         case 2:
-            strcpy(casilla->figura, "círculo");
+            strcpy(casilla->figura, "circulo");
             break;
         case 3:
-            strcpy(casilla->figura, "pentágono");
+            strcpy(casilla->figura, "pentagono");
             break;
     }
     return casilla;

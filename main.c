@@ -7,7 +7,7 @@
 
 #include "juegos/jackpot.h"
 #include "juegos/blackjack.h"
-//#include "juegos/craps.h"
+#include "juegos/craps.h"
 #include "juegos/higherorlower.h"
 #include "juegos/poker.h"
 #include "juegos/roulette.h"
@@ -21,7 +21,9 @@ void guardarValor(const char *nombreArchivo, int valor) {
 				printf("No se pudo abrir el archivo para escribir.\n");
 				return;
 		}
-
+		puts("========================================");
+		puts("Progreso guardado con éxito");
+		puts("========================================");
 		fprintf(archivo, "%d\n", valor);
 		fclose(archivo);
 }
@@ -154,13 +156,15 @@ int main()
 				break;
 			}
 			
-			//Craps(cantFichasJugador);
+			CrapsGame(&cantFichasJugador);
 			break;
 
 		case '7':
 			cantFichasJugador = 1000;
 			guardarValor(nombreArchivo, cantFichasJugador);
-			printf("Progreso reiniciado con exito. Cantidad de fichas actuales: %d\n", cantFichasJugador);
+			puts("========================================");
+			printf("Progreso reiniciado con éxito. Cantidad de fichas actuales: %d\n", cantFichasJugador);
+			puts("========================================");
 		break;
 			
 		case '8':
@@ -169,9 +173,13 @@ int main()
 			break;
 		case '9':
 			if (cargarValor(nombreArchivo, &cantFichasJugador) != 0) {
-					printf("Puntaje no pudo ser cargado");
+				puts("========================================");
+				puts("Progreso no pudo ser cargado");
+				puts("========================================");
 			} else {
-					printf("Puntaje cargado con exito");
+				puts("========================================");
+				puts("Progreso cargado con éxito");
+				puts("========================================");
 			}
 			break;
 		}

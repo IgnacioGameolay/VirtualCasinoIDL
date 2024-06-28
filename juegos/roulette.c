@@ -34,7 +34,7 @@ void InicializarRuleta(TipoRuleta *ruleta)
 }
 
 // Función para crear una apuesta TipoApuesta
-void CrearApuesta(TipoApuesta* apuesta, int *chips)
+static void CrearApuestaRoulette(TipoApuesta* apuesta, int *chips)
 {
   puts("========================================");
   printf("¿Qué tipo de apuesta desea hacer?\n");
@@ -197,7 +197,7 @@ int ObtenerColumna(int numero)
 }
 
 // Función para evaluar el resultado de juego
-int EvaluarApuesta(TipoApuesta *apuesta, TipoRuleta *ruleta)
+static int EvaluarApuestaRoulette(TipoApuesta *apuesta, TipoRuleta *ruleta)
 {
   int resultado = ruleta->casillaActual;
   switch (apuesta->tipo)
@@ -313,9 +313,9 @@ int RouletteGame(int *chipCount)
     {
       case '1':
         InicializarRuleta(&ruleta);
-        CrearApuesta(&apuesta, chipCount);
+        CrearApuestaRoulette(&apuesta, chipCount);
         GirarRuleta(&ruleta);
-        resultado = EvaluarApuesta(&apuesta, &ruleta);
+        resultado = EvaluarApuestaRoulette(&apuesta, &ruleta);
         if (resultado == 1){
           
           apuesta.monto += RondaBonus(&(apuesta.monto));
