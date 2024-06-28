@@ -58,6 +58,7 @@ void crearApuesta(TipoApuesta *apuesta, TipoJuego *juego)
       }
       if(tipo == 3)
       {
+        apuesta->tipo = 0;
         return;
       }
       apuesta->tipo = tipo;
@@ -95,11 +96,97 @@ void lanzarDados(TipoDado *dados)
   int indice2 = dados->dado2 = rand() % MAX_CARAS;
 }
 
-void evaluarApuesta(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego)
+int evaluarApuestaFavor(TipoApuesta *apuesta, TipoJuego *juego, TipoDado *dados)
+{
+  int resultado;
+  do
+  {
+    dados->dado1[0] = lanzarDado();
+    dados->dado2[0] = lanzarDado();
+    resultado = dados->dado1[0] + dados->dado2[0];
+    printf("Lanzamiento: %d + %d = %d\n", dados->dado1[0], dados->dado2[0], resultado);
+
+    if (resultado == 7 || resultado == 11)
+    {
+      printf("Ganaste la apuesta a favor del número a venir!\n");
+      return 1;
+    } 
+    else if (resultado == 2 || resultado == 3 || resultado == 12)
+    {
+      printf("Perdiste la apuesta a favor del número a venir.\n");
+      return 0;
+    } 
+    else
+    {
+      juego->punto = resultado;
+      printf("Se ha establecido el punto en %d.\n", juego->punto);
+      }
+    } while (resultado != 7 && resultado != juego->punto);
+
+    if (resultado == juego->punto)
+    {
+      printf("Ganaste la apuesta a favor del número a venir!\n");
+      return 1;
+    }
+    else
+    {
+      printf("Perdiste la apuesta a favor del número a venir.\n");
+      return 0;
+    }
+}
+
+int evaluarApuestaContra(TipoApuesta *apuesta, TipoJuego *juego, TipoDado *dados)
+{
+  int resultado;
+  do
+  {
+    dados->dado1[0] = lanzarDado();
+    dados->dado2[0] = lanzarDado();
+    resultado = dados->dado1[0] + dados->dado2[0];
+    printf("Lanzamiento: %d + %d = %d\n", dados->dado1[0], dados->dado2[0], resultado);
+
+    if (resultado == 2 || resultado == 3)
+    {
+      printf("Ganaste la apuesta en contra del número a venir!\n");
+      return 1;
+    } 
+    else if (resultado == 7 || resultado == 11)
+    {
+      printf("Perdiste la apuesta en contra del número a venir.\n");
+      return 0;
+    } 
+    else if (resultado == 12)
+    {
+      printf("Empate en la apuesta en contra del número a venir.\n");
+      return 3;
+    } 
+    else 
+    {
+      juego->punto = resultado;
+      printf("Se ha establecido el punto en %d.\n", juego->punto);
+    }
+  } while (resultado != 7 && resultado != juego->punto);
+  
+  if (resultado == 7)
+  {
+    printf("Ganaste la apuesta en contra del número a venir!\n");
+    return 1;
+  } 
+  else 
+  {
+    printf("Perdiste la apuesta en contra del número a venir.\n");
+    return 0;
+  }
+}
+
+
+int evaluarApuesta(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego)
 {
   int suma = dados->dado1[indice1] + dados->dado2[indice2];
+  printf("Lanzamiento: %d + %d = %d\n", dados->dado1[indice1], dados->dado2[indice2], suma);
   if(suma != 2 && suma != 3 && suma != 7 && suma != 11 && suma != 12)
   {
+    printf("Se ha establecido el punto en %d.\n", suma);
     juego->estado = 2;
     juego->punto = suma;
   }
@@ -134,27 +221,27 @@ void evaluarApuesta(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego)
     case 2: // Barra de No Pase
       if (juego->estado == 1)
       { // Tiro de salida
-        if (resultado == 2 || resultado == 3)
+        if (suma == 2 || suma == 3)
         {
           printf("Ganaste la apuesta de Barra de No Pase!\n");
         } 
-        else if (resultado == 7 || resultado == 11)
+        else if (suma == 7 || suma == 11)
         {
           printf("Perdiste la apuesta de Barra de No Pase.\n");
         } 
-        else if (resultado == 12)
+        else if (suma == 12)
         {
           printf("Empate en la apuesta de Barra de No Pase.\n");
         } 
       } 
       else 
       { // Tiro de punto
-        if (resultado == 7)
+        if (suma == 7)
         {
           printf("Ganaste la apuesta de Barra de No Pase!\n");
           juego->estado = 1;
         } 
-        else if (resultado == juego->punto) 
+        else if (suma == juego->punto) 
         {
           printf("Perdiste la apuesta de Barra de No Pase.\n");
           juego->estado = 1;
@@ -162,19 +249,7 @@ void evaluarApuesta(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego)
       }
       break;
       case 3: // A favor del número a venir
-          if (juego->estado == 1) { // Tiro de salida
-              printf("Las apuestas a favor del número a venir no están permitidas en el tiro de salida.\n");
-          } else { // Tiro de punto
-              if (resultado == 7 || resultado == 11) {
-                  printf("Ganaste la apuesta a favor del número a venir!\n");
-              } else if (resultado == 2 || resultado == 3 || resultado == 12) {
-                  printf("Perdiste la apuesta a favor del número a venir.\n");
-              } else {
-                  juego->punto = resultado;
-                  printf("Se ha establecido el punto en %d.\n", juego->punto);
-              }
-          }
-          break;
+        evualuarApuestaFavor(apuesta, juego, dados);
       case 4: // En contra del número a venir
           if (juego->estado == 1) { // Tiro de salida
               printf("Las apuestas en contra del número a venir no están permitidas en el tiro de salida.\n");
@@ -202,13 +277,12 @@ int CrapsGame(int *chipCount)
   char option; //Option del menu
   TipoApuesta apuesta; //Apuesta a realizar
   int resultado; //Resultado de la juego
-
-
-  TipoRuleta ruleta;
+  TipoDado dados;
+  TipoJuego juego;
   do
   {
     puts("========================================");
-    puts(" Bienvenido a la Ruleta.");
+    puts(" Bienvenido al juego de Craps");
     puts("========================================");
     printf("\n   Cantidad Actual de Fichas: %d\n\n", *chipCount);
     puts("========================================");
@@ -224,9 +298,13 @@ int CrapsGame(int *chipCount)
     switch (option)
     {
       case '1':
-        InicializarRuleta(&ruleta);
-        CrearApuesta(&apuesta, chipCount);
-        GirarRuleta(&ruleta);
+        inicializarRonda(&dados, &juego);
+        crearApuesta(&apuesta, &juego);
+        lanzarDados(&dados);
+        if(apuesta->tipo = 0)
+        {
+          crearApuesta(&apuesta, &juego);
+        }
         resultado = EvaluarApuesta(&apuesta, &ruleta);
         if (resultado == 1){
 

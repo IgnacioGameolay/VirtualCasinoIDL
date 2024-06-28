@@ -75,7 +75,7 @@ int JackpotGame(int *cantFichasJugador) {
     int apuesta = 0;
     do {
         puts("========================================");
-        puts(" Bienvenido a Jackpot.");
+        puts(" Bienvenido a $Jackpot.");
         puts("========================================");
         printf("\n   Cantidad Actual de Fichas: %d\n\n", *cantFichasJugador);
         puts("========================================");
