@@ -11,7 +11,11 @@ struct TipoBaraja {
 		int cartaActual;
 };
 
-void InicializarBaraja(TipoBaraja *baraja) { 
+static int IsLowerInt(void *key1, void *key2) {
+	return *(int *)key1 <= *(int *)key2; 
+}
+
+static void InicializarBaraja(TipoBaraja *baraja) {  //Inicializar la baraja
 	baraja->listaCartas = list_create();
 
 	int i, j, k = 0;
@@ -32,12 +36,12 @@ void InicializarBaraja(TipoBaraja *baraja) {
 	baraja->cartaActual = 0;  // Inicializa el índice de la próxima carta a repartir
 }
 
-TipoCarta* SacarCarta(Stack* barajada){
+static TipoCarta* SacarCarta(Stack* barajada){  //Sacar carta del stack
 	TipoCarta* carta = stack_pop(barajada);
 	return carta;
 }
 
-Stack* MezclarBaraja(List* listaCartas) {
+static Stack* MezclarBaraja(List* listaCartas) { //Mezcla de baraja
 	// Crear mapa y stack
 		Map* mapaCartas = sorted_map_create(IsLowerInt);
 		Stack* barajada = stack_create(NULL);
@@ -73,7 +77,7 @@ Stack* MezclarBaraja(List* listaCartas) {
 }
 
 
-void MenuHL(){
+void MenuHL(){  //Menu de juego
 
 	puts("========================================");
 	puts(" Bienvenido a Higher or Lower.");
@@ -84,7 +88,7 @@ void MenuHL(){
 	puts("========================================");
 }
 
-void reglasHL(){
+void reglasHL(){ //Reglas de juego
 	puts("========================================");
 	puts("         Higher or Lower - Reglas");
 	puts("========================================");
@@ -103,116 +107,153 @@ void reglasHL(){
 	puts("========================================");
 }
 
-void juegoHL(int *chipCount){
+void juegoHL(int *chipCount){  //Juego Higher or lower
+	
+	
 	int apuesta = 0;
 	int apuestaInicial = 0;
-	int multiplicadorActual = 1.1;
-	TipoCarta cartaActual;
-	TipoCarta cartaSiguiente;
-	TipoCarta cartaAnterior;
+	float multiplicadorActual = 1.1;
+	TipoCarta* cartaActual = (TipoCarta *) malloc(sizeof(TipoCarta));
+	TipoCarta* cartaSiguiente = (TipoCarta *) malloc(sizeof(TipoCarta));
+	TipoCarta* cartaAnterior = (TipoCarta *) malloc(sizeof(TipoCarta));
+	TipoBaraja baraja;
+	InicializarBaraja(&baraja);
+	Stack* barajaMezclada = MezclarBaraja((&baraja)->listaCartas);
 
-	TipoBaraja *baraja = InicializarBaraja();
-	TipoBaraja *barajaMezclada = MezclarBaraja(baraja);
+	puts("========================================");   //Inicializacion de juego
+	puts("Inicio de una nueva ronda de apuestas");
+	puts("========================================");
 
-	printf("========================================\n");
-	printf("Inicio de una nueva ronda de apuestas\n");
-	printf("========================================\n");
-
-	printf("Ingrese su apuesta: ");
+	puts("Ingrese su apuesta: ");
 	scanf("%d", &apuesta);
 	apuestaInicial = apuesta;
 	cartaActual = SacarCarta(barajaMezclada);
 	cartaSiguiente = SacarCarta(barajaMezclada);
 	
-	while(1){
+	while(1){   //Ciclo de juego
+		presioneTeclaParaContinuar();
+		limpiarPantalla();
+		
+		puts("========================================");   //Mostrar carta actual
+		printf("Carta actual: %d de %c\n", cartaActual->valor, cartaActual->palo);
+		printf("Multiplicador actual x%.1f\n", multiplicadorActual); //Multiplicador actual
+		puts("========================================");
+		puts("1) Mayor");
+		puts("2) Menor");
+		puts("3) Retirarse");
+		puts("========================================");
 
-		printf("========================================\n");
-		printf("Carta actual: %d de %s\n", cartaActual.valor, cartaActual.palo);
-		printf("========================================\n");
-		printf("1) Mayor\n");
-		printf("2) Menor\n");
-		printf("3) Retirarse\n");
-		printf("========================================\n");
-
-		printf("Ingrese su opción: ");
+		puts("Ingrese su opción: ");
 		int opcion;
 		scanf("%d", &opcion);
-		cartaAnterior = cartaActual;
-		cartaActual = SacarCarta(barajaMezclada);
 		if(opcion == 1){
-			if(cartaSiguiente.valor > cartaActual.valor){
-				printf("========================================\n");
-				printf("¡Felicidades! Tu apuesta aumenta en un x1.1.\n");
-				printf("========================================\n");
+			if(cartaSiguiente->valor > cartaActual->valor){ //Si el valor de la siguiente carta es mayor
+				puts("========================================");
+				puts("¡Felicidades! Tu apuesta aumenta en un x1.1.");
+				printf("Nueva carta actual %d de %c\n", cartaSiguiente->valor, cartaSiguiente->palo);
+				puts("========================================");
 				apuesta = apuesta * multiplicadorActual;
 				multiplicadorActual += 0.1;
+				cartaAnterior = cartaActual;
+				cartaActual = cartaSiguiente;
+				cartaSiguiente = SacarCarta(barajaMezclada);
 			}
-			else if(cartaSiguiente.valor < cartaActual.valor){
-				printf("========================================\n");
+			else if(cartaSiguiente->valor < cartaActual->valor){ //Si el valor de la siguiente carta es menor
+				puts("========================================");
 				printf("Lo siento, has fallado. Pierdes %d fichas.\n", apuesta);
-				printf("========================================\n");
+				printf("Ultima carta: %d de %c\n", cartaSiguiente->valor, cartaSiguiente->palo);
+				puts("========================================");
 				*chipCount -= apuestaInicial;
+				free(cartaActual);
+				free(cartaSiguiente);
+				free(cartaAnterior);
 				break;
 			}
-			else if(cartaSiguiente.valor == cartaActual.valor){
-				printf("========================================\n");
-				printf("La carta siguiente es igual a la actual. se repite la apuesta\n");
-				printf("========================================\n");
+			else if(cartaSiguiente->valor == cartaActual->valor){ //Si las cartas son iguales
+				puts("========================================");
+				puts("La carta siguiente es igual a la actual. Se repite la apuesta");
+				puts("========================================");
+				cartaAnterior = cartaActual;
+				cartaActual = cartaSiguiente;
+				cartaSiguiente = SacarCarta(barajaMezclada);
 			}
 		}
 		if(opcion == 2){
-			if(cartaSiguiente.valor < cartaActual.valor){
-				printf("========================================\n");
-				printf("¡Felicidades! Tu apuesta aumenta en un x1.1.\n");
-				printf("========================================\n");
+			if(cartaSiguiente->valor < cartaActual->valor){ //Si el valor de la siguiente carta es menor
+				puts("========================================");
+				puts("¡Felicidades! Tu apuesta aumenta en un x1.1.");
+				printf("Nueva carta actual %d de %c\n", cartaSiguiente->valor, cartaSiguiente->palo);
+				puts("========================================");
 				apuesta = apuesta * multiplicadorActual;
 				multiplicadorActual += 0.1;
+				cartaAnterior = cartaActual;
+				cartaActual = cartaSiguiente;
+				cartaSiguiente = SacarCarta(barajaMezclada);
 			}
-			else if (cartaSiguiente.valor > cartaActual.valor){
-				printf("========================================\n");
+			else if (cartaSiguiente->valor > cartaActual->valor){ //Si el valor de la siguiente carta es mayor
+				puts("========================================");
 				printf("Lo siento, has fallado. Pierdes %d fichas.\n", apuesta);
-				printf("========================================\n");
+				printf("Ultima carta: %d de %c\n", cartaSiguiente->valor, cartaSiguiente->palo);
+				puts("========================================");
 				*chipCount -= apuestaInicial;
+				free(cartaActual);
+				free(cartaSiguiente);
+				free(cartaAnterior);
 				break;
 			}
-			else if (cartaSiguiente.valor == cartaActual.valor){
-				printf("========================================\n");
-				printf("La carta siguiente es igual a la actual. se repite la apuesta\n");
-				printf("========================================\n");
+			else if (cartaSiguiente->valor == cartaActual->valor){ //Si las cartas son iguales
+				puts("========================================");
+				puts("La carta siguiente es igual a la actual. Se repite la apuesta");
+				puts("========================================");
+				cartaAnterior = cartaActual;
+				cartaActual = cartaSiguiente;
+				cartaSiguiente = SacarCarta(barajaMezclada);
 			}
 		}
-		if(opcion == 3){
-			printf("========================================\n");
+		if(opcion == 3){ 
+			puts("========================================");  //Retirada del juego
 			printf("Te retiras. Ganas %d fichas.\n", apuesta);
-			printf("========================================\n");
+			puts("========================================");
+
+			apuesta += RondaBonus(&apuesta);
 			*chipCount += apuesta;
+			free(cartaActual);
+			free(cartaSiguiente);
+			free(cartaAnterior);
 			break;
 		}
 		
 	}
+	return;
 }
 
 
-int HigherOrLower(int *chipCount){
+int HigherOrLower(int *chipCount){ //Menu del juego Higher or Lower
 
-	char opcion;
+	int opcion;
 
 	do {
 		MenuHL();
-		scanf(" %c", &opcion);
+		scanf("%d", &opcion);
 		switch(opcion){
-			case '1':
+			case 1:
+				presioneTeclaParaContinuar();
+				limpiarPantalla();
 				juegoHL(chipCount);
 				return 0;
-			case '2':
+			case 2:
+				presioneTeclaParaContinuar();
+				limpiarPantalla();
 				reglasHL();
 				break;
-			case '3':
+			case 3:
 				return 0;
+			default:
+				puts("Ingrese una opción válida");
+			
 		}
-	} while(opcion != '3');
+	} while(opcion != 3);
 
 	return 0;
-	
 }
 
