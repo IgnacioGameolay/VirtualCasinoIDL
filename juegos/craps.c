@@ -108,29 +108,23 @@ void evaluarApuesta(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego)
     case 1: // Línea de Pase
       if (juego->estado == 1)
       { // Tiro de salida
-        if (resultado == 7 || resultado == 11) 
+        if (suma == 7 || suma == 11) 
         {
           printf("Ganaste la apuesta de Línea de Pase!\n");
         } 
-        else if (resultado == 2 || resultado == 3 || resultado == 12)
+        else if (suma == 2 || suma == 3 || suma == 12)
         {
           printf("Perdiste la apuesta de Línea de Pase.\n");
         } 
-        else 
-        {
-          juego->punto = resultado;
-          juego->estado = 2;
-          printf("Se ha establecido el punto en %d.\n", juego->punto);
-        }
       } 
       else
       { // Tiro de punto
-        if (resultado == juego->punto)
+        if (suma == juego->punto)
         {
           printf("Ganaste la apuesta de Línea de Pase!\n");
           juego->estado = 1;
         } 
-        else if (resultado == 7)
+        else if (suma == 7)
         {
           printf("Perdiste la apuesta de Línea de Pase.\n");
           juego->estado = 1;
@@ -138,28 +132,35 @@ void evaluarApuesta(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego)
       }
       break;
     case 2: // Barra de No Pase
-          if (juego->estado == 1) { // Tiro de salida
-              if (resultado == 2 || resultado == 3) {
-                  printf("Ganaste la apuesta de Barra de No Pase!\n");
-              } else if (resultado == 7 || resultado == 11) {
-                  printf("Perdiste la apuesta de Barra de No Pase.\n");
-              } else if (resultado == 12) {
-                  printf("Empate en la apuesta de Barra de No Pase.\n");
-              } else {
-                  juego->punto = resultado;
-                  juego->estado = 2;
-                  printf("Se ha establecido el punto en %d.\n", juego->punto);
-              }
-          } else { // Tiro de punto
-              if (resultado == 7) {
-                  printf("Ganaste la apuesta de Barra de No Pase!\n");
-                  juego->estado = 1;
-              } else if (resultado == juego->punto) {
-                  printf("Perdiste la apuesta de Barra de No Pase.\n");
-                  juego->estado = 1;
-              }
-          }
-          break;
+      if (juego->estado == 1)
+      { // Tiro de salida
+        if (resultado == 2 || resultado == 3)
+        {
+          printf("Ganaste la apuesta de Barra de No Pase!\n");
+        } 
+        else if (resultado == 7 || resultado == 11)
+        {
+          printf("Perdiste la apuesta de Barra de No Pase.\n");
+        } 
+        else if (resultado == 12)
+        {
+          printf("Empate en la apuesta de Barra de No Pase.\n");
+        } 
+      } 
+      else 
+      { // Tiro de punto
+        if (resultado == 7)
+        {
+          printf("Ganaste la apuesta de Barra de No Pase!\n");
+          juego->estado = 1;
+        } 
+        else if (resultado == juego->punto) 
+        {
+          printf("Perdiste la apuesta de Barra de No Pase.\n");
+          juego->estado = 1;
+        }
+      }
+      break;
       case 3: // A favor del número a venir
           if (juego->estado == 1) { // Tiro de salida
               printf("Las apuestas a favor del número a venir no están permitidas en el tiro de salida.\n");
@@ -194,4 +195,55 @@ void evaluarApuesta(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego)
           printf("Tipo de apuesta inválido.\n");
           break;
   }
+}
+
+int CrapsGame(int *chipCount)
+{
+  char option; //Option del menu
+  TipoApuesta apuesta; //Apuesta a realizar
+  int resultado; //Resultado de la juego
+
+
+  TipoRuleta ruleta;
+  do
+  {
+    puts("========================================");
+    puts(" Bienvenido a la Ruleta.");
+    puts("========================================");
+    printf("\n   Cantidad Actual de Fichas: %d\n\n", *chipCount);
+    puts("========================================");
+    puts("(1) Jugar");
+    puts("(2) Reglas");
+    puts("(3) Volver al menú principal");
+    puts("========================================");
+    printf("Ingrese su opción: \n");
+    puts("========================================");
+    scanf(" %c", &option);
+
+    //Opciones del menu
+    switch (option)
+    {
+      case '1':
+        InicializarRuleta(&ruleta);
+        CrearApuesta(&apuesta, chipCount);
+        GirarRuleta(&ruleta);
+        resultado = EvaluarApuesta(&apuesta, &ruleta);
+        if (resultado == 1){
+
+          apuesta.monto += RondaBonus(&(apuesta.monto));
+          *chipCount += apuesta.monto;
+        }
+        break;
+        case '2':
+            puts("Las reglas son...");
+            break;
+        case '3':
+            return 0;
+            break;
+        }
+        presioneTeclaParaContinuar();
+        limpiarPantalla();
+
+    } while (option != '0');
+    return 0;
 }
