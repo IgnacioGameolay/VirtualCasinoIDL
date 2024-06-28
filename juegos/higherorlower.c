@@ -233,6 +233,7 @@ int HigherOrLower(int *chipCount){ //Menu del juego Higher or Lower
 	int opcion;
 
 	do {
+		limpiarPantalla();
 		MenuHL();
 		scanf("%d", &opcion);
 		switch(opcion){
@@ -242,9 +243,10 @@ int HigherOrLower(int *chipCount){ //Menu del juego Higher or Lower
 				juegoHL(chipCount);
 				return 0;
 			case 2:
-				presioneTeclaParaContinuar();
 				limpiarPantalla();
 				reglasHL();
+				presioneTeclaParaContinuar();
+				limpiarPantalla();
 				break;
 			case 3:
 				return 0;

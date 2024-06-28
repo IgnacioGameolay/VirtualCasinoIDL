@@ -7,11 +7,10 @@
 
 #include "juegos/jackpot.h"
 #include "juegos/blackjack.h"
-//#include "juegos/cartas.h"
 //#include "juegos/craps.h"
 #include "juegos/higherorlower.h"
 #include "juegos/poker.h"
-//#include "juegos/roulette.h"
+#include "juegos/roulette.h"
 
 
 // Función para guardar el valor en un archivo
@@ -41,6 +40,7 @@ int cargarValor(const char *nombreArchivo, int *valor) {
 
 		return 0; // Indica que la carga fue exitosa
 }
+
 
 
 
@@ -111,7 +111,10 @@ int main()
 		//Opciones del menu
 		switch (option) {
 		case '1':
-			// Blackjack
+			if (cantFichasJugador < 25) {
+				puts("No tienes suficientes fichas para jugar");
+				break;
+			}
 			BlackjackGame(&cantFichasJugador);
 			break;
 		case '2':
@@ -123,23 +126,22 @@ int main()
 			
 			break;
 		case '3':
-			if (cantFichasJugador < 101) {
+			if (cantFichasJugador < 100) {
 				puts("No tienes suficientes fichas para jugar");
 				break;
 			}
-			
 			HigherOrLower(&cantFichasJugador);
 			break;
 		case '4':
-			if (cantFichasJugador < 0) {
+			if (cantFichasJugador < 25) {
 				puts("No tienes suficientes fichas para jugar");
 				break;
 			}
 			
-			//Ruleta(cantFichasJugador);
+			RouletteGame(&cantFichasJugador);
 			break;
 		case '5':
-			if (cantFichasJugador < 0) {
+			if (cantFichasJugador < 25) {
 				puts("No tienes suficientes fichas para jugar");
 				break;
 			} 
@@ -147,7 +149,7 @@ int main()
 			JackpotGame(&cantFichasJugador);
 			break;
 		case '6':
-			if (cantFichasJugador < 0) {
+			if (cantFichasJugador < 50) {
 				puts("No tienes suficientes fichas para jugar");
 				break;
 			}

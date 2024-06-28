@@ -1,13 +1,8 @@
 #include "jackpot.h"
 
 
-/**
- *
- * Función para crear una casilla del rodillo de jackpot
- *
- * @return Retorna un puntero a la casilla creada por la funcion
- */
-// 
+
+//Función para crear una casilla del rodillo de jackpot
 TipoCasilla* CrearCasilla() {
     
     TipoCasilla* casilla = (TipoCasilla*)malloc(sizeof(TipoCasilla));
@@ -35,13 +30,8 @@ TipoCasilla* CrearCasilla() {
 }
 
 
-/**
- *
- * Función para crear el rodillo y agregarle las casillas del jackpot
- *
- * @return Retorna un puntero a al rodillo generado por la funcion
- */
-// 
+
+//Función para crear el rodillo y agregarle las casillas del jackpot
 TipoRodillo* CrearRodillo() {
     TipoRodillo* rodillo = (TipoRodillo*)malloc(sizeof(TipoRodillo));
     if (rodillo == NULL){
@@ -59,14 +49,9 @@ TipoRodillo* CrearRodillo() {
     return rodillo;
 }
 
-/**
- *
- * Función para verificar las condiciones de victoria del usuario
- *
- * @param *rodillo Puntero al rodillo del jackpot
- * @return Retorna 1 si el usuario gana, 0 si pierde
- */
-// 
+
+// Función para verificar las condiciones de victoria del usuario
+
 int VerificarPremioJackpot(TipoRodillo* rodillo) {
     TipoCasilla* casilla1 = (TipoCasilla*)list_first(rodillo->listaCasillas);
     TipoCasilla* casilla2 = (TipoCasilla*)list_next(rodillo->listaCasillas);
@@ -80,12 +65,8 @@ int VerificarPremioJackpot(TipoRodillo* rodillo) {
 }
 
 
-/**
- *
- * Función principal del juego.
- *
- */
-// 
+//Función principal del juego.
+ 
 int JackpotGame(int *cantFichasJugador) {
     srand(time(NULL));
     TipoRodillo* rodillo = CrearRodillo();
@@ -134,6 +115,7 @@ int JackpotGame(int *cantFichasJugador) {
                 puts(" ¡Bien Jugado!");
                 puts(" Volviendo al menu principal....");
                 puts("========================================");
+                apuesta += RondaBonus(&apuesta);
                 (*cantFichasJugador) += apuesta*1.5;
             } else {
                 (*cantFichasJugador) -= apuesta;
@@ -147,6 +129,7 @@ int JackpotGame(int *cantFichasJugador) {
             return 0;
             
         case '2':
+            limpiarPantalla();
             puts("========================================");
             puts("Objetivo: Obtener una combinación de símbolos idénticos en todas las casillas del rodillo.\n");
 
@@ -162,9 +145,7 @@ int JackpotGame(int *cantFichasJugador) {
             puts("========================================\n");
             break;
         case '3':
-            //HigherOrLower(cantFichasJugador);
             return 0;
-            break;
         }
         presioneTeclaParaContinuar();
         limpiarPantalla();
