@@ -103,7 +103,7 @@ static void CrearApuestaCraps(TipoApuesta *apuesta, TipoJuego *juego)
 // Función para lanzar los dados y devolver el índice del resultado
 void LanzarDados(TipoDado *dados)
 {
-  srand(time(NULL));
+  srand(time(NULL) ^ clock());
   int indice1 = rand() % 6;
   //printf("indice 1L %d\n", indice1);
   int indice2 = rand() % 6;
@@ -124,12 +124,16 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
       { // Tiro de salida
         if (suma == 7 || suma == 11) 
         {
+          puts("========================================");
           printf("Ganaste la apuesta de Línea de Pase!\n");
+          puts("========================================");
           return 1;
         } 
         else if (suma == 2 || suma == 3 || suma == 12)
         {
+          puts("========================================");
           printf("Perdiste la apuesta de Línea de Pase.\n");
+          puts("========================================");
           return 0;
         } 
       } 
@@ -137,12 +141,16 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
       { // Tiro de punto
         if (sumaPunto == juego->punto)
         {
+          puts("========================================");
           printf("Ganaste la apuesta de Línea de Pase!\n");
+          puts("========================================");
           return 1;
         } 
         else if (sumaPunto == 7)
         {
+          puts("========================================");
           printf("Perdiste la apuesta de Línea de Pase.\n");
+          puts("========================================");
           return 0;
         }
       }
@@ -152,17 +160,23 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
       { // Tiro de salida
         if (suma == 2 || suma == 3)
         {
+          puts("========================================");
           printf("Ganaste la apuesta de Barra de No Pase!\n");
+          puts("========================================");
           return 1;
         } 
         else if (suma == 7 || suma == 11)
         {
+          puts("========================================");
           printf("Perdiste la apuesta de Barra de No Pase.\n");
+          puts("========================================");
           return 0;
         } 
         else if (suma == 12)
         {
+          puts("========================================");
           printf("Empate en la apuesta de Barra de No Pase.\n");
+          puts("========================================");
           return 2;
         } 
       } 
@@ -170,12 +184,16 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
       { // Tiro de punto
         if (sumaPunto == 7)
         {
+          puts("========================================");
           printf("Ganaste la apuesta de Barra de No Pase!\n");
+          puts("========================================");
           return 1;
         } 
         else if (sumaPunto == juego->punto) 
         {
+          puts("========================================");
           printf("Perdiste la apuesta de Barra de No Pase.\n");
+          puts("========================================");
           return 0;
         }
       }
@@ -183,12 +201,16 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
       case 3: // A favor del número a venir
         if (sumaPunto ==  7 || sumaPunto == 11)
         {
+          puts("========================================");
           printf("Ganaste la apuesta a favor del número a venir!\n");
+          puts("========================================");
           return 1;
         }
         else if(sumaPunto == 2 || sumaPunto == 3 || sumaPunto == 12)
         {
+          puts("========================================");
           printf("Perdiste la apuesta a favor del número a venir.\n");
+          puts("========================================");
           return 0;
         }
         else
@@ -216,17 +238,23 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
       case 4: // En contra del número a venir
         if (sumaPunto ==  2 || sumaPunto == 3)
           {
-            printf("Ganaste la apuesta a favor del número a venir!\n");
+            puts("========================================");
+            printf("Ganaste la apuesta en contra del número a venir!\n");
+            puts("========================================");
             return 1;
           }
           else if(sumaPunto == 7 || sumaPunto == 11)
           {
-            printf("Perdiste la apuesta a favor del número a venir.\n");
+            puts("========================================");
+            printf("Perdiste la apuesta en contra del número a venir.\n");
+            puts("========================================");
             return 0;
           }
           else if(sumaPunto == 12)
           {
-            printf("Empate en la apuesta a favor del número a venir.\n");
+            puts("========================================");
+            printf("Empate en la apuesta en contra del número a venir.\n");
+            puts("========================================");
             return 2;
           }
           else
@@ -240,11 +268,11 @@ int EvaluarApuestaCraps(TipoApuesta *apuesta, TipoDado *dados, TipoJuego *juego,
               printf("Lanzamiento: %d + %d = %d\n", dados->cara1, dados->cara2, sumaPuntoVenir);
               if(sumaPuntoVenir == 7)
               {
-                printf("Ganaste la apuesta a favor del número a venir!\n");
+                printf("Ganaste la apuesta en contra del número a venir!\n");
               }
               else if(sumaPuntoVenir == juego->punto)
               {
-                printf("Perdiste la apuesta a favor del número a venir.\n");
+                printf("Perdiste la apuesta en contra del número a venir.\n");
               }
             }
           }
