@@ -1,5 +1,6 @@
 #include "craps.h"
 #define MAX_CARAS 6
+#define MIN_CHIPS 50
 
 // Estructura para silumar los dados y su caras
 struct TipoDado
@@ -37,7 +38,7 @@ void InicializarRonda(TipoDado *dados, TipoJuego *juego)
 }
 
 // Función para crear una apuesta según el estado actual del juego
-static void CrearApuestaCraps(TipoApuesta *apuesta, TipoJuego *juego)
+static void CrearApuestaCraps(TipoApuesta *apuesta, TipoJuego *juego, int *chipCount)
 {
   printf("¿Qué tipo de apuesta desea hacer?\n");
 
@@ -58,7 +59,7 @@ static void CrearApuestaCraps(TipoApuesta *apuesta, TipoJuego *juego)
       if(tipo < 1 || tipo > 3)
       {
         printf("Opción inválida. Intente de nuevo.\n");
-        CrearApuestaCraps(apuesta, juego);
+        return;
       }
       if(tipo == 3)
       {
@@ -78,7 +79,7 @@ static void CrearApuestaCraps(TipoApuesta *apuesta, TipoJuego *juego)
       if(tipo < 1 || tipo > 2)
       {
         printf("Opción inválida. Intente de nuevo.\n");
-        CrearApuestaCraps(apuesta, juego);
+        return;
       }
       apuesta->tipo = tipo + 2;
       break;
@@ -89,10 +90,12 @@ static void CrearApuestaCraps(TipoApuesta *apuesta, TipoJuego *juego)
   puts("========================================");
   printf("Ingrese el monto de su apuesta: ");
   scanf("%d", &monto);
-  if(monto < 1)
+  if(monto > *chipCount || monto < MIN_CHIPS)
   {
-    printf("Monto inválido. Intente de nuevo.\n");
-    CrearApuestaCraps(apuesta, juego);
+    printf("Monto inválido o no tienes suficientes fichas para apostar a este juego ($50 mínimo).\n");
+    monto = 0;
+    apuesta->tipo = -1;
+    return;
   }
   apuesta->monto = monto;
   puts("========================================");
@@ -337,7 +340,11 @@ int CrapsGame(int *chipCount)
     {
       case '1':
         InicializarRonda(&dados, &juego);
-        CrearApuestaCraps(&apuesta, &juego);
+        CrearApuestaCraps(&apuesta, &juego, chipCount);
+        if(apuesta.tipo == -1)
+        {
+          break;
+        }
         LanzarDados(&dados);
         int suma, sumaPunto;
         suma = dados.cara1 + dados.cara2;
@@ -358,7 +365,11 @@ int CrapsGame(int *chipCount)
           }
           else
           {
-            CrearApuestaCraps(&apuesta, &juego);
+            CrearApuestaCraps(&apuesta, &juego, chipCount);
+            if(apuesta.tipo == -1)
+            {
+              break;
+            }
           }
         }
 

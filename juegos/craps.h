@@ -31,7 +31,8 @@ void InicializarRonda(TipoDado *dados, TipoJuego *juego);
 // Función para crear una apuesta según el estado actual del juego
 // @param *apuesta Puntero a la estructura TipoApuesta que representa la apuesta a realizar
 // @param *juego Puntero a la estructura TipoJuego que representa el estado del juego
-static void CrearApuestaCraps(TipoApuesta *apuesta, TipoJuego *juego);
+//@param *chipCount Puntero a los chips que posee el usuario.
+static void CrearApuestaCraps(TipoApuesta *apuesta, TipoJuego *juego, int *chipCount);
 
 // Función para lanzar los dados y devolver el índice del resultado
 // @param *dados Puntero a la estructura TipoDado que representa los dados
