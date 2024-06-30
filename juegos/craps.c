@@ -5,9 +5,9 @@
 // Estructura para silumar los dados y su caras
 struct TipoDado
 {
-    int dado1[MAX_CARAS];
+    ArrayList *dado1;
     int cara1;
-    int dado2[MAX_CARAS];
+    ArrayList *dado2;
     int cara2;
 };
 
@@ -28,11 +28,15 @@ struct TipoJuego
 // Función para inicializar la ronda de dados y el juego
 void InicializarRonda(TipoDado *dados, TipoJuego *juego)
 {
-  for (int i = 0; i < MAX_CARAS; i++)
+  initializeArrayList(dados->dado1, MAX_CARAS);
+  initializeArrayList(dados->dado2, MAX_CARAS);
+
+  for(int i = 0; i < MAX_CARAS; i++)
   {
-    dados->dado1[i] = i + 1;
-    dados->dado2[i] = i + 1;
+    insert(dados->dado1, (i + 1));
+    insert(dados->dado2, (i + 1));
   }
+
   juego->punto = -1;
   juego->estado = 1;
 }
@@ -44,7 +48,7 @@ static void CrearApuestaCraps(TipoApuesta *apuesta, TipoJuego *juego, int *chipC
 
   int monto; 
   int tipo;
-  
+
   switch (juego->estado)
   {
     case 1:
@@ -109,8 +113,10 @@ void LanzarDados(TipoDado *dados)
   //printf("indice 1L %d\n", indice1);
   int indice2 = rand() % 6;
   //printf("indice 2L %d\n", indice2);
-  dados->cara1 = dados->dado1[indice1];
-  dados->cara2 = dados->dado2[indice2];
+  int cara1 = getElement(dados->dado1, indice1);
+  int cara2 = getElement(dados->dado2, indice2);
+  dados->cara1 = cara1;
+  dados->cara2 = cara2;
 }
 
 
@@ -320,6 +326,8 @@ int CrapsGame(int *chipCount)
   int resultado; //Resultado de la juego
   TipoDado dados;
   TipoJuego juego;
+  dados.dado1 = (ArrayList *)malloc(sizeof(ArrayList *));
+  dados.dado2 = (ArrayList *)malloc(sizeof(ArrayList *));
   do
   {
     puts("========================================");
@@ -409,7 +417,7 @@ int CrapsGame(int *chipCount)
           puts("Si obtienes cualquier otro número, este se convertirá en tu punto a venir y deberás seguir rolleando. Si vuelves a rollear tu punto a venir, ganas. Si rolleas un 7, pierdes!");
           puts("La apuesta en contra del número a venir consiste en que le apuestas a que el siguiente número que obtendrás será un 2 o 3. Si obtienes un 12, has empatado! Cualquier otro número se volverá tu punto a venir, en cuyo caso deberás seguir lanzando los dados hasta volver a obtener tu punto, o un 7");
           puts("Si obtienes un 7, felicidades! Has ganado tu apuesta! Pero si vuelves a rollear tu punto a venir, perderás tu apuesta.");
-          
+
             break;
         case '3':
             return 0;

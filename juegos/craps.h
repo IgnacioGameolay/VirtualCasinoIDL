@@ -6,6 +6,7 @@
 #include <time.h>
 #include <string.h>
 #include "../tdas/list.h"
+#include "../tdas/arraylist.h"
 #include "../tdas/stack.h"
 #include "../tdas/map.h"
 #include "../tdas/extra.h"

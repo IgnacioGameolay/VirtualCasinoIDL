@@ -19,17 +19,17 @@ struct TipoApuesta
 // Estructura para representar la ruleta, tanto la casilla como el arreglo de la ruleta.
 struct TipoRuleta
 {
-  int roulette[NUM_CASILLAS];
+  ArrayList *roulette;
   int casillaActual;
 };
 
 // Función para inicializar la ruleta
 void InicializarRuleta(TipoRuleta *ruleta)
 {  
-  int i;
-  for(i = 0; i < NUM_CASILLAS; i++)
+  initializeArrayList(ruleta->roulette, NUM_CASILLAS);
+  for(int i = 0; i < NUM_CASILLAS; i++)
   {
-    ruleta->roulette[i] = i;
+    insert(ruleta->roulette, i);
   }
   ruleta->casillaActual = -1;
 }
@@ -61,17 +61,24 @@ static void CrearApuestaRoulette(TipoApuesta* apuesta, int *chips)
   }
   apuesta->monto = monto;
   puts("========================================");
-  
+
   switch (tipo) 
   {
     case 1: // Apuesta a número
-      apuesta->tipo = 1;
       printf("Ingrese el número al que desea apostar (0-36):\n");
       scanf("%d", &apuesta->numero);
+      if(apuesta->numero < 0 || apuesta->numero > 36)
+      {
+        printf("Número inválido. Apuesta cancelada\n");
+        apuesta->monto = 0;
+        apuesta->tipo = 0;
+        puts("========================================");
+        return;
+      }
+      apuesta->tipo = 1;
       puts("========================================");
       break;
     case 2: // Apuesta a color
-      apuesta->tipo = 2;
       printf("Ingrese el color al que desea apostar (Rojo, Negro, Verde):\n");
       char color[10];
       scanf("%s", color);
@@ -82,13 +89,15 @@ static void CrearApuestaRoulette(TipoApuesta* apuesta, int *chips)
       else
       {
         printf("Color inválido. Apuesta cancelada.\n");
+        apuesta->monto = 0;
+        apuesta->tipo = 0;
         puts("========================================");
         return;
       }
+      apuesta->tipo = 2;
       puts("========================================");
       break;
     case 3: // Apuesta a paridad
-      apuesta->tipo = 3;
       printf("Ingrese la paridad a la que desea apostar (Par, Impar):\n");
       char paridad[10];
       scanf("%s", paridad);
@@ -99,45 +108,54 @@ static void CrearApuestaRoulette(TipoApuesta* apuesta, int *chips)
       else 
       {
         printf("Paridad inválida. Apuesta cancelada.\n");
+        apuesta->monto = 0;
+        apuesta->tipo = 0;
         puts("========================================");
         return;
       }
+      apuesta->tipo = 3;
       puts("========================================");
       break;
     case 4: // Apuesta a columna
-      apuesta->tipo = 4;
       printf("Ingrese la columna a la que desea apostar (1 - 2 - 3):\n");
       scanf("%d", &apuesta->columna);
       if (apuesta->columna < 1 || apuesta->columna > 3) 
       {
         printf("Columna inválida. Apuesta cancelada.\n");
+        apuesta->monto = 0;
+        apuesta->tipo = 0;
         puts("========================================");
         return;
       }
+      apuesta->tipo = 4;
       puts("========================================");
       break;
     case 5: // Apuesta a docena
-      apuesta->tipo = 5;
       printf("Ingrese la docena a la que desea apostar (1 - 2 - 3):\n");
       scanf("%d", &apuesta->docena);
       if (apuesta->docena < 1 || apuesta->docena > 3) 
       {
         printf("Docena inválida. Apuesta cancelada.\n");
+        apuesta->monto = 0;
+        apuesta->tipo = 0;
         puts("========================================");
         return;
       }
+      apuesta->tipo = 5;
       puts("========================================");
       break;
     case 6: // Apuesta a mitad
-      apuesta->tipo = 6;
       printf("Ingrese la mitad a la que desea apostar (1 - 2):\n");
       scanf("%d", &apuesta->mitad);
       if (apuesta->mitad < 1 || apuesta->mitad > 2) 
       {
         printf("Mitad inválida. Apuesta cancelada.\n");
+        apuesta->monto = 0;
+        apuesta->tipo = 0;
         puts("========================================");
         return;
       }
+      apuesta->tipo = 6;
       puts("========================================");
       break;
     default:
@@ -154,7 +172,8 @@ void GirarRuleta(TipoRuleta *ruleta)
 {
   srand(time(NULL));
   int indiceGanador = rand() % NUM_CASILLAS;
-  ruleta->casillaActual = ruleta->roulette[indiceGanador];
+  int elementoGanador = getElement(ruleta->roulette, indiceGanador);
+  ruleta->casillaActual = elementoGanador;
   printf("La ruleta ha girado y ha caído en la casilla %d!\n", ruleta->casillaActual);
   puts("================================");
 }
@@ -293,9 +312,8 @@ int RouletteGame(int *chipCount)
   TipoApuesta apuesta; //Apuesta a realizar
   apuesta.tipo == 0;
   int resultado; //Resultado de la juego
-  
-  
   TipoRuleta ruleta;
+  ruleta.roulette = (ArrayList *)malloc(sizeof(ArrayList*));
   do
   {
     puts("========================================");
@@ -346,7 +364,7 @@ int RouletteGame(int *chipCount)
         GirarRuleta(&ruleta);
         resultado = EvaluarApuestaRoulette(&apuesta, &ruleta);
         if (resultado == 1){
-          
+
           apuesta.monto += RondaBonus(&(apuesta.monto));
           *chipCount += apuesta.monto;
         }
