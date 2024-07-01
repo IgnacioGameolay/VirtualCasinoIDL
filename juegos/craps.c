@@ -420,6 +420,9 @@ int CrapsGame(int *chipCount)
 
             break;
         case '3':
+            puts("Volviendo al menú principal...");
+            destroyArrayList(dados.dado1);
+            destroyArrayList(dados.dado2);
             return 0;
             break;
         }

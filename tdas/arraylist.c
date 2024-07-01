@@ -41,7 +41,7 @@ int getElement(ArrayList *list, int index)
   if (index < 0 || index >= list->size)
   {
     printf("Error: Índice fuera de rango.\n");
-    return -1;  // O podrías manejar el error de otra manera según tu aplicación
+    return -1;
   }
   
   return list->elements[index];

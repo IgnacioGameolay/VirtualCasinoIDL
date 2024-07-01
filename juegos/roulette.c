@@ -389,6 +389,8 @@ int RouletteGame(int *chipCount)
             puts("================================");
             break;
         case '3':
+            puts("Volviendo al menú principal...");
+            destroyArrayList(ruleta.roulette);
             return 0;
             break;
         }
